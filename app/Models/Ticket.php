@@ -40,30 +40,18 @@ class Ticket extends Model
         return $this->hasOne(SentimentLog::class);
     }
 
-    // ==================== SAFE TICKET NUMBER GENERATION ====================
+    // ==================== TICKET NUMBER GENERATION ====================
     protected static function boot()
     {
         parent::boot();
 
         static::creating(function ($ticket) {
-            if (empty($ticket->ticket_number)) {
-                $year = date('Y');
-                
-                $lastTicket = self::whereYear('created_at', $year)
-                                ->orderBy('id', 'desc')
-                                ->first();
+            $year = date('Y');
 
-                $nextNumber = 1;
+            // Count existing tickets this year, then +1
+            $count = self::whereYear('created_at', $year)->count() + 1;
 
-                if ($lastTicket && $lastTicket->ticket_number) {
-                    // Extract number safely
-                    if (preg_match('/(\d{4})$/', $lastTicket->ticket_number, $matches)) {
-                        $nextNumber = (int)$matches[1] + 1;
-                    }
-                }
-
-                $ticket->ticket_number = 'TICKET-' . $year . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
-            }
+            $ticket->ticket_number = 'TKT-' . $year . '-' . str_pad($count, 3, '0', STR_PAD_LEFT);
         });
     }
 
