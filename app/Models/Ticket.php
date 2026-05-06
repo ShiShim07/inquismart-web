@@ -10,8 +10,15 @@ class Ticket extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'staff_id', 'subject', 'description',
-        'status', 'sentiment', 'staff_response', 'responded_at'
+        'user_id', 
+        'staff_id', 
+        'subject', 
+        'description',
+        'status', 
+        'sentiment', 
+        'staff_response', 
+        'responded_at',
+        'ticket_number'   // ← siguraduhin na may ganito
     ];
 
     protected $casts = [
@@ -33,6 +40,29 @@ class Ticket extends Model
         return $this->hasOne(SentimentLog::class);
     }
 
+    // ==================== AUTO GENERATE TICKET NUMBER ====================
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($ticket) {
+            if (empty($ticket->ticket_number)) {
+                $year = date('Y');
+                
+                $lastTicket = self::whereYear('created_at', $year)
+                                ->orderBy('id', 'desc')
+                                ->first();
+
+                $nextNumber = $lastTicket 
+                    ? (int)substr($lastTicket->ticket_number, -4) + 1 
+                    : 1;
+
+                $ticket->ticket_number = 'TICKET-' . $year . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+            }
+        });
+    }
+
+    // ==================== ACCESSORS ====================
     public function getSentimentColorAttribute()
     {
         return match($this->sentiment) {
