@@ -6,65 +6,79 @@
 @endpush
 
 @section('content')
+
+{{-- Summary Cards Row --}}
 <div class="row g-3 mb-4">
-    <!-- Sentiment Chart -->
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="stat-card">
-            <h6 style="font-weight:700;color:#1A1A2E;margin-bottom:16px;">
-                <i class="bi bi-pie-chart me-2 text-primary"></i>Sentiment Distribution
+            <div class="d-flex align-items-center gap-3">
+                <div class="stat-icon" style="background:#FEF2F2;flex-shrink:0;">
+                    <i class="bi bi-exclamation-triangle" style="color:#DC2626;"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Urgent Tickets</div>
+                    <div class="stat-value" style="color:#991B1B;font-size:26px;">{{ $sentimentData['Urgent'] }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="d-flex align-items-center gap-3">
+                <div class="stat-icon" style="background:#FFFBEB;flex-shrink:0;">
+                    <i class="bi bi-emoji-frown" style="color:#D97706;"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Frustrated Tickets</div>
+                    <div class="stat-value" style="color:#92400E;font-size:26px;">{{ $sentimentData['Frustrated'] }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="d-flex align-items-center gap-3">
+                <div class="stat-icon" style="background:#EFF6FF;flex-shrink:0;">
+                    <i class="bi bi-emoji-smile" style="color:#3B82F6;"></i>
+                </div>
+                <div>
+                    <div class="stat-label">Neutral Tickets</div>
+                    <div class="stat-value" style="color:#1E40AF;font-size:26px;">{{ $sentimentData['Neutral'] }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Charts Row --}}
+<div class="row g-4 mb-4">
+    <div class="col-md-5">
+        <div class="card-surface h-100">
+            <h6 class="section-header mb-4">
+                <i class="bi bi-pie-chart"></i> Sentiment Distribution
             </h6>
-            <canvas id="sentimentChart" height="200"></canvas>
+            <div style="position:relative;max-width:280px;margin:0 auto;">
+                <canvas id="sentimentChart" height="240"></canvas>
+            </div>
         </div>
     </div>
 
-    <!-- Status Chart -->
-    <div class="col-md-6">
-        <div class="stat-card">
-            <h6 style="font-weight:700;color:#1A1A2E;margin-bottom:16px;">
-                <i class="bi bi-bar-chart me-2 text-primary"></i>Ticket Status Overview
+    <div class="col-md-7">
+        <div class="card-surface h-100">
+            <h6 class="section-header mb-4">
+                <i class="bi bi-bar-chart"></i> Ticket Status Overview
             </h6>
             <canvas id="statusChart" height="200"></canvas>
         </div>
     </div>
 </div>
 
-<!-- Summary Cards -->
-<div class="row g-3 mb-4">
-    <div class="col-md-4">
-        <div class="stat-card text-center">
-            <div class="icon mx-auto mb-2" style="background:#FFEBEE;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;">
-                <i class="bi bi-exclamation-triangle" style="color:#C62828;font-size:22px;"></i>
-            </div>
-            <div style="font-size:28px;font-weight:700;color:#C62828;">{{ $sentimentData['Urgent'] }}</div>
-            <div style="font-size:13px;color:#666;">Urgent Tickets</div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="stat-card text-center">
-            <div class="icon mx-auto mb-2" style="background:#FFF8E1;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;">
-                <i class="bi bi-emoji-frown" style="color:#F57F17;font-size:22px;"></i>
-            </div>
-            <div style="font-size:28px;font-weight:700;color:#F57F17;">{{ $sentimentData['Frustrated'] }}</div>
-            <div style="font-size:13px;color:#666;">Frustrated Tickets</div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="stat-card text-center">
-            <div class="icon mx-auto mb-2" style="background:#E3F2FD;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;">
-                <i class="bi bi-emoji-smile" style="color:#1565C0;font-size:22px;"></i>
-            </div>
-            <div style="font-size:28px;font-weight:700;color:#1565C0;">{{ $sentimentData['Neutral'] }}</div>
-            <div style="font-size:13px;color:#666;">Neutral Tickets</div>
-        </div>
-    </div>
-</div>
-
-<!-- Monthly Chart -->
-<div class="stat-card">
-    <h6 style="font-weight:700;color:#1A1A2E;margin-bottom:16px;">
-        <i class="bi bi-graph-up me-2 text-primary"></i>Monthly Ticket Volume ({{ date('Y') }})
+{{-- Monthly Chart --}}
+<div class="card-surface">
+    <h6 class="section-header mb-4">
+        <i class="bi bi-graph-up"></i> Monthly Ticket Volume — {{ date('Y') }}
     </h6>
-    <canvas id="monthlyChart" height="100"></canvas>
+    <canvas id="monthlyChart" height="90"></canvas>
 </div>
 
 @push('scripts')
@@ -74,24 +88,31 @@ const monthlyData = @json($monthlyTickets);
 const monthlyLabels = monthlyData.map(d => months[d.month - 1]);
 const monthlyCounts = monthlyData.map(d => d.count);
 
-// Sentiment Pie Chart
+Chart.defaults.font.family = "'DM Sans', system-ui, sans-serif";
+Chart.defaults.color = '#64748B';
+
 new Chart(document.getElementById('sentimentChart'), {
     type: 'doughnut',
     data: {
         labels: ['Urgent', 'Frustrated', 'Neutral'],
         datasets: [{
             data: [{{ $sentimentData['Urgent'] }}, {{ $sentimentData['Frustrated'] }}, {{ $sentimentData['Neutral'] }}],
-            backgroundColor: ['#EF5350', '#FFA726', '#42A5F5'],
+            backgroundColor: ['#EF4444', '#F59E0B', '#3B82F6'],
             borderWidth: 0,
+            hoverOffset: 4,
         }]
     },
     options: {
-        plugins: { legend: { position: 'bottom' } },
-        cutout: '65%',
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: { padding: 16, font: { size: 13 }, boxWidth: 12, boxHeight: 12, borderRadius: 3 }
+            }
+        },
+        cutout: '68%',
     }
 });
 
-// Status Bar Chart
 new Chart(document.getElementById('statusChart'), {
     type: 'bar',
     data: {
@@ -99,36 +120,67 @@ new Chart(document.getElementById('statusChart'), {
         datasets: [{
             label: 'Tickets',
             data: [{{ $statusData['Pending'] }}, {{ $statusData['Processing'] }}, {{ $statusData['Resolved'] }}],
-            backgroundColor: ['#42A5F5', '#FFA726', '#66BB6A'],
+            backgroundColor: ['rgba(59,130,246,0.15)', 'rgba(245,158,11,0.15)', 'rgba(34,197,94,0.15)'],
+            borderColor: ['#3B82F6', '#F59E0B', '#22C55E'],
+            borderWidth: 1.5,
             borderRadius: 8,
+            borderSkipped: false,
         }]
     },
     options: {
         plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: { stepSize: 1, font: { size: 12 } },
+                grid: { color: 'rgba(0,0,0,0.04)' },
+                border: { color: 'transparent' }
+            },
+            x: {
+                grid: { display: false },
+                ticks: { font: { size: 13 } },
+                border: { color: 'transparent' }
+            }
+        },
     }
 });
 
-// Monthly Line Chart
 new Chart(document.getElementById('monthlyChart'), {
     type: 'line',
     data: {
         labels: monthlyLabels.length ? monthlyLabels : months,
         datasets: [{
             label: 'Tickets',
-            data: monthlyCounts.length ? monthlyCounts : [0,0,0,0,0,0,0,0,0,0,0,0],
-            borderColor: '#1565C0',
-            backgroundColor: 'rgba(21,101,192,0.1)',
+            data: monthlyCounts.length ? monthlyCounts : new Array(12).fill(0),
+            borderColor: '#3B82F6',
+            backgroundColor: 'rgba(59,130,246,0.06)',
             fill: true,
             tension: 0.4,
-            pointBackgroundColor: '#1565C0',
+            pointBackgroundColor: '#3B82F6',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6,
         }]
     },
     options: {
         plugins: { legend: { display: false } },
-        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: { stepSize: 1, font: { size: 12 } },
+                grid: { color: 'rgba(0,0,0,0.04)' },
+                border: { color: 'transparent' }
+            },
+            x: {
+                grid: { display: false },
+                ticks: { font: { size: 12 } },
+                border: { color: 'transparent' }
+            }
+        }
     }
 });
 </script>
 @endpush
+
 @endsection
