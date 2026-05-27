@@ -1,101 +1,82 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ticket;
-use App\Models\Notification;
 use Illuminate\Http\Request;
 
 class TicketController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $query = Ticket::with('user')->orderByRaw("FIELD(sentiment, 'Urgent', 'Frustrated', 'Neutral')")
-            ->orderBy('created_at', 'desc');
+        $tickets = Ticket::where('user_id', auth()->id())->latest()->get();
+        return response()->json($tickets);
+    }
 
-        if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'subject'     => 'required|string|max:255',
+            'description' => 'required|string',
+        ]);
+
+        // ─────────────────────────────────────────────────────────
+        // AI Sentiment Analysis Module
+        // Classification: Positive | Negative | Neutral
+        // Method: Keyword-based NLP classification
+        // ─────────────────────────────────────────────────────────
+        $description = strtolower($request->description);
+
+        // Positive keywords — customer is happy, satisfied, or praising
+        $positiveWords = [
+            'thank', 'thanks', 'salamat', 'happy', 'satisfied', 'great',
+            'excellent', 'amazing', 'good', 'appreciate', 'wonderful',
+            'love', 'perfect', 'awesome', 'best', 'pleased', 'glad',
+            'helpful', 'fast', 'maganda', 'magaling', 'masaya',
+        ];
+
+        // Negative keywords — customer is frustrated, angry, or dissatisfied
+        $negativeWords = [
+            'frustrated', 'angry', 'disappointed', 'worst', 'terrible',
+            'bad', 'horrible', 'unacceptable', 'poor', 'awful', 'rude',
+            'broken', 'defective', 'sira', 'galit', 'hindi maganda',
+            'scam', 'fake', 'lie', 'cheated', 'never', 'useless',
+            'waste', 'refund', 'urgent', 'asap', 'immediately',
+            'emergency', 'agad', 'need it now', 'not working',
+        ];
+
+        $sentiment = 'Neutral'; // default
+
+        // Check Positive first
+        foreach ($positiveWords as $word) {
+            if (str_contains($description, $word)) {
+                $sentiment = 'Positive';
+                break;
+            }
         }
 
-        if ($request->has('sentiment') && $request->sentiment != '') {
-            $query->where('sentiment', $request->sentiment);
+        // Check Negative (overrides Positive if both detected — negative wins)
+        foreach ($negativeWords as $word) {
+            if (str_contains($description, $word)) {
+                $sentiment = 'Negative';
+                break;
+            }
         }
 
-        if ($request->has('search') && $request->search != '') {
-            $query->where('subject', 'like', '%' . $request->search . '%');
-        }
+        $ticket = Ticket::create([
+            'user_id'     => auth()->id(),
+            'subject'     => $request->subject,
+            'description' => $request->description,
+            'status'      => 'Pending',
+            'sentiment'   => $sentiment,
+        ]);
 
-        $tickets = $query->paginate(10);
-
-        return view('admin.tickets.index', compact('tickets'));
+        return response()->json($ticket, 201);
     }
 
     public function show(Ticket $ticket)
     {
-        $ticket->load('user');
-        return view('admin.tickets.show', compact('ticket'));
-    }
-
-    public function respond(Request $request, Ticket $ticket)
-    {
-        $request->validate([
-            'staff_response' => 'required|string|min:5',
-        ]);
-
-        $ticket->update([
-            'staff_response' => $request->staff_response,
-            'status'         => 'Resolved',
-            'staff_id'       => auth()->id(),
-            'responded_at'   => now(),
-        ]);
-
-        // ✅ Notify customer — ticket resolved with response
-        Notification::create([
-            'user_id'   => $ticket->user_id,
-            'title'     => 'Ticket Resolved! ✅',
-            'message'   => 'Your ticket "' . $ticket->subject . '" has been resolved. Tap to view the response.',
-            'type'      => 'ticket_resolved',
-            'ticket_id' => $ticket->id,
-            'is_read'   => false,
-        ]);
-
-        return redirect()->route('admin.tickets.show', $ticket)
-            ->with('success', 'Response sent and ticket marked as Resolved!');
-    }
-
-    public function updateStatus(Request $request, Ticket $ticket)
-    {
-        $request->validate(['status' => 'required|in:Pending,Processing,Resolved']);
-
-        $oldStatus = $ticket->status;
-        $newStatus = $request->status;
-
-        $ticket->update(['status' => $newStatus]);
-
-        // ✅ Notify customer only if status actually changed
-        if ($oldStatus !== $newStatus) {
-            if ($newStatus === 'Processing') {
-                Notification::create([
-                    'user_id'   => $ticket->user_id,
-                    'title'     => 'Ticket Update 🔄',
-                    'message'   => 'Your ticket "' . $ticket->subject . '" is now being processed by our staff.',
-                    'type'      => 'ticket_processing',
-                    'ticket_id' => $ticket->id,
-                    'is_read'   => false,
-                ]);
-            } elseif ($newStatus === 'Resolved') {
-                Notification::create([
-                    'user_id'   => $ticket->user_id,
-                    'title'     => 'Ticket Resolved! ✅',
-                    'message'   => 'Your ticket "' . $ticket->subject . '" has been marked as resolved.',
-                    'type'      => 'ticket_resolved',
-                    'ticket_id' => $ticket->id,
-                    'is_read'   => false,
-                ]);
-            }
-        }
-
-        return back()->with('success', 'Ticket status updated!');
+        return response()->json($ticket);
     }
 }
