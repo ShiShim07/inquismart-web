@@ -11,7 +11,8 @@ return new class extends Migration
         Schema::create('sentiment_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('ticket_id')->constrained()->onDelete('cascade');
-            $table->enum('sentiment_result', ['Urgent', 'Frustrated', 'Neutral'])->default('Neutral');
+            // Updated: Urgent/Frustrated → Positive/Negative/Neutral (panel requirement)
+            $table->enum('sentiment_result', ['Positive', 'Negative', 'Neutral'])->default('Neutral');
             $table->float('confidence_score')->default(0);
             $table->timestamps();
         });
