@@ -9,19 +9,18 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // STEP 1 — Update existing data FIRST (before changing the enum)
-        // This converts old Urgent/Frustrated → Negative so MySQL won't complain
-        DB::statement("UPDATE tickets SET sentiment = 'Neutral' WHERE sentiment NOT IN ('Urgent','Frustrated','Neutral')");
+        // STEP 1 — VARCHAR muna para walang ENUM restriction
+        DB::statement("ALTER TABLE tickets MODIFY COLUMN sentiment VARCHAR(20) NOT NULL DEFAULT 'Neutral'");
+
+        // STEP 2 — Safe na i-update ang data
         DB::statement("UPDATE tickets SET sentiment = 'Negative' WHERE sentiment = 'Urgent'");
         DB::statement("UPDATE tickets SET sentiment = 'Negative' WHERE sentiment = 'Frustrated'");
+        DB::statement("UPDATE tickets SET sentiment = 'Neutral' WHERE sentiment NOT IN ('Positive','Negative','Neutral')");
 
-        // STEP 2 — Now safely change the enum (data is already clean)
-        DB::statement("
-            ALTER TABLE tickets
-            MODIFY COLUMN sentiment ENUM('Positive','Negative','Neutral') NOT NULL DEFAULT 'Neutral'
-        ");
+        // STEP 3 — Ngayon palitan ng bagong ENUM
+        DB::statement("ALTER TABLE tickets MODIFY COLUMN sentiment ENUM('Positive','Negative','Neutral') NOT NULL DEFAULT 'Neutral'");
 
-        // STEP 3 — Add new columns if they don't exist yet
+        // STEP 4 — Dagdag na columns
         Schema::table('tickets', function (Blueprint $table) {
             if (!Schema::hasColumn('tickets', 'processing_at')) {
                 $table->timestamp('processing_at')->nullable()->after('responded_at');
@@ -37,12 +36,9 @@ return new class extends Migration
 
     public function down(): void
     {
+        DB::statement("ALTER TABLE tickets MODIFY COLUMN sentiment VARCHAR(20) NOT NULL DEFAULT 'Neutral'");
         DB::statement("UPDATE tickets SET sentiment = 'Urgent' WHERE sentiment = 'Negative'");
-
-        DB::statement("
-            ALTER TABLE tickets
-            MODIFY COLUMN sentiment ENUM('Urgent','Frustrated','Neutral') NOT NULL DEFAULT 'Neutral'
-        ");
+        DB::statement("ALTER TABLE tickets MODIFY COLUMN sentiment ENUM('Urgent','Frustrated','Neutral') NOT NULL DEFAULT 'Neutral'");
 
         Schema::table('tickets', function (Blueprint $table) {
             foreach (['processing_at', 'resolved_at', 'sentiment_confidence'] as $col) {
