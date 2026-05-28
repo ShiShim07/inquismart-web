@@ -8,7 +8,6 @@ use App\Http\Controllers\Admin\ChatbotLogsController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 
-
 // Redirect root to login
 Route::get('/', function () {
     return redirect()->route('login');
@@ -23,6 +22,8 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name
 
 // Admin Routes (protected)
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+
+    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Tickets
@@ -31,22 +32,19 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/tickets/{ticket}/respond', [TicketController::class, 'respond'])->name('tickets.respond');
     Route::patch('/tickets/{ticket}/status', [TicketController::class, 'updateStatus'])->name('tickets.status');
 
-    //Chatbot Logs
-    Route::get('/chatbot/logs', [ChatbotLogsController::class, 'index'])->name('chatbot.logs');
-    Route::get('/chatbot/{userId}/conversation', [ChatbotLogsController::class, 'conversation'])->name('chatbot.conversation');
-    Route::post('/chatbot/{userId}/reply', [ChatbotLogsController::class, 'reply'])->name('chatbot.reply');
-    Route::delete('/chatbot/{userId}', [ChatbotLogsController::class, 'destroy'])->name('chatbot.destroy');
-    
     // FAQs
     Route::get('/faqs', [FAQController::class, 'index'])->name('faqs.index');
     Route::post('/faqs', [FAQController::class, 'store'])->name('faqs.store');
     Route::put('/faqs/{faq}', [FAQController::class, 'update'])->name('faqs.update');
     Route::delete('/faqs/{faq}', [FAQController::class, 'destroy'])->name('faqs.destroy');
 
-    // Analytics (Module 15 — Service Analytics)
+    // Analytics (Module 15)
     Route::get('/analytics', [DashboardController::class, 'analytics'])->name('analytics');
 
-    // Chatbot Logs (Module 3 / Module 16)
+    // Chatbot Logs + Human Handoff (Module 3 / 16 / 17)
     Route::get('/chatbot/logs', [ChatbotLogsController::class, 'index'])->name('chatbot.logs');
-    Route::delete('/chatbot/logs/{id}', [ChatbotLogsController::class, 'destroy'])->name('chatbot.destroy');
+    Route::get('/chatbot/{userId}/conversation', [ChatbotLogsController::class, 'conversation'])->name('chatbot.conversation');
+    Route::post('/chatbot/{userId}/reply', [ChatbotLogsController::class, 'reply'])->name('chatbot.reply');
+    Route::delete('/chatbot/{userId}', [ChatbotLogsController::class, 'destroy'])->name('chatbot.destroy');
+
 });
