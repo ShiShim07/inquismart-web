@@ -5,7 +5,7 @@
 
 {{-- Stats Row --}}
 <div class="row g-3 mb-4">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="stat-card">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
@@ -19,7 +19,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="stat-card">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
@@ -33,7 +33,21 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="stat-label">Needs Human</div>
+                    <div class="stat-value" style="color:#B45309;">{{ $needsHuman }}</div>
+                    <div class="stat-sub">Awaiting staff reply</div>
+                </div>
+                <div class="stat-icon" style="background:#FFFBEB;">
+                    <i class="bi bi-exclamation-triangle" style="color:#F59E0B;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
         <div class="stat-card">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
@@ -51,6 +65,17 @@
     </div>
 </div>
 
+{{-- Needs Human Alert --}}
+@if($needsHuman > 0)
+<div class="alert alert-warning d-flex align-items-center gap-2 mb-4" style="border-radius:12px;">
+    <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+    <div>
+        <strong>{{ $needsHuman }} conversation(s) need your attention!</strong>
+        The bot could not answer — please reply to these customers below.
+    </div>
+</div>
+@endif
+
 {{-- Filters --}}
 <div class="card-surface mb-4">
     <form method="GET" action="{{ route('admin.chatbot.logs') }}" class="row g-3 align-items-end">
@@ -65,7 +90,7 @@
                 @endforeach
             </select>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <label class="form-label" style="font-size:13px;font-weight:600;">Filter by Intent</label>
             <select name="intent" class="form-select form-select-sm">
                 <option value="">All Intents</option>
@@ -76,22 +101,109 @@
                 @endforeach
             </select>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
+            <label class="form-label" style="font-size:13px;font-weight:600;">Needs Human Reply</label>
+            <select name="needs_human" class="form-select form-select-sm">
+                <option value="">All</option>
+                <option value="1" {{ request('needs_human') == '1' ? 'selected' : '' }}>Needs Human Only</option>
+            </select>
+        </div>
+        <div class="col-md-2 d-flex gap-2">
             <button type="submit" class="btn btn-primary btn-sm">
                 <i class="bi bi-funnel me-1"></i> Filter
             </button>
-            <a href="{{ route('admin.chatbot.logs') }}" class="btn btn-outline-secondary btn-sm ms-2">
-                <i class="bi bi-x-circle me-1"></i> Clear
+            <a href="{{ route('admin.chatbot.logs') }}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-x-circle"></i>
             </a>
         </div>
     </form>
 </div>
 
-{{-- Logs Table --}}
+{{-- Conversations Table (grouped by customer) --}}
+<div class="card-surface mb-4">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h6 class="section-header">
+            <i class="bi bi-people"></i> Customer Conversations
+        </h6>
+        <span style="font-size:12px;color:var(--text-muted);">Click "View & Reply" to open a conversation</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Customer</th>
+                    <th>Messages</th>
+                    <th>Last Message</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($conversations as $conv)
+                <tr>
+                    <td style="font-weight:500;">
+                        {{ $conv->user->name ?? 'Unknown' }}
+                        <div style="font-size:11px;color:var(--text-muted);">{{ $conv->user->email ?? '' }}</div>
+                    </td>
+                    <td>
+                        <span style="font-weight:600;">{{ $conv->message_count }}</span>
+                        <span style="font-size:12px;color:var(--text-muted);"> messages</span>
+                    </td>
+                    <td style="color:var(--text-muted);font-size:13px;">
+                        {{ \Carbon\Carbon::parse($conv->last_message_at)->format('M d, Y h:i A') }}
+                    </td>
+                    <td>
+                        @if($conv->escalated_count > 0)
+                            <span class="badge bg-warning text-dark">
+                                <i class="bi bi-exclamation-triangle me-1"></i>Needs Human
+                            </span>
+                        @else
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle me-1"></i>Bot Handled
+                            </span>
+                        @endif
+                    </td>
+                    <td>
+                        <a href="{{ route('admin.chatbot.conversation', $conv->user_id) }}"
+                           class="btn btn-sm btn-primary">
+                            <i class="bi bi-chat-text me-1"></i> View & Reply
+                        </a>
+                        <form action="{{ route('admin.chatbot.destroy', $conv->user_id) }}"
+                              method="POST" class="d-inline"
+                              onsubmit="return confirm('Clear all chat history for this user?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-outline-danger ms-1">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">
+                        <i class="bi bi-chat-square" style="font-size:28px;display:block;margin-bottom:8px;"></i>
+                        No chatbot conversations yet
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    @if($conversations->hasPages())
+    <div class="mt-4">
+        {{ $conversations->links() }}
+    </div>
+    @endif
+</div>
+
+{{-- Full Message Log (all messages) --}}
 <div class="card-surface">
     <div class="d-flex align-items-center justify-content-between mb-4">
         <h6 class="section-header">
-            <i class="bi bi-chat-square-text"></i> Conversation Logs
+            <i class="bi bi-chat-square-text"></i> All Message Logs
         </h6>
         <span style="font-size:12px;color:var(--text-muted);">{{ $logs->total() }} total messages</span>
     </div>
@@ -103,7 +215,7 @@
                     <th>Customer</th>
                     <th>Role</th>
                     <th>Message</th>
-                    <th>Intent Detected</th>
+                    <th>Intent</th>
                     <th>Date & Time</th>
                 </tr>
             </thead>
@@ -119,17 +231,24 @@
                             <span class="badge-sentiment badge-neutral">
                                 <i class="bi bi-person-fill me-1"></i>Customer
                             </span>
-                        @else
+                        @elseif($log->role === 'staff')
                             <span class="badge-sentiment badge-positive">
+                                <i class="bi bi-person-badge me-1"></i>Staff
+                            </span>
+                        @else
+                            <span style="background:#F5F3FF;color:#7C3AED;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;">
                                 <i class="bi bi-robot me-1"></i>Bot
                             </span>
                         @endif
                     </td>
                     <td style="color:var(--text-muted);max-width:320px;">
                         {{ Str::limit($log->message, 80) }}
+                        @if($log->needs_human)
+                            <span class="badge bg-warning text-dark ms-1" style="font-size:10px;">⚡ Escalated</span>
+                        @endif
                     </td>
                     <td>
-                        @if($log->intent)
+                        @if($log->intent && $log->intent !== 'staff_reply')
                             <span style="background:#F5F3FF;color:#7C3AED;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;">
                                 {{ ucfirst($log->intent) }}
                             </span>
@@ -153,7 +272,6 @@
         </table>
     </div>
 
-    {{-- Pagination --}}
     @if($logs->hasPages())
     <div class="mt-4">
         {{ $logs->links() }}
