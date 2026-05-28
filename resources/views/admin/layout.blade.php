@@ -10,6 +10,8 @@
         :root {
             --primary: #1565C0;
             --sidebar-width: 260px;
+            --text-muted: #6B7280;
+            --text-xs: #9CA3AF;
         }
         body { background: #F5F7FA; font-family: 'Segoe UI', sans-serif; }
         .sidebar {
@@ -68,29 +70,90 @@
         }
         .topbar h6 { margin: 0; color: #1A1A2E; font-weight: 600; }
         .content-area { padding: 24px; }
+
+        /* ── Stat Cards ── */
         .stat-card {
             background: white;
             border-radius: 16px;
             padding: 20px;
             border: none;
             box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            position: relative;
         }
-        .stat-card .icon {
-            width: 48px;
-            height: 48px;
+        .stat-label { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+        .stat-value { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+        .stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+        .stat-icon {
+            width: 44px; height: 44px;
             border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+        }
+        .card-surface {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+        .section-header {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1A1A2E;
+            margin: 0;
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 22px;
+            gap: 8px;
         }
-        .badge-urgent { background: #FFEBEE; color: #C62828; }
-        .badge-frustrated { background: #FFF8E1; color: #F57F17; }
-        .badge-neutral { background: #E3F2FD; color: #1565C0; }
-        .badge-pending { background: #E3F2FD; color: #1565C0; }
-        .badge-processing { background: #FFF8E1; color: #F57F17; }
-        .badge-resolved { background: #E8F5E9; color: #2E7D32; }
-        .ticket-row:hover { background: #F8F9FA; cursor: pointer; }
+
+        /* ── Sentiment badges — Updated: Negative/Positive/Neutral ── */
+        .badge-sentiment {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        /* NEW sentiment values */
+        .badge-negative  { background: #FEF2F2; color: #991B1B; }
+        .badge-positive  { background: #F0FDF4; color: #166534; }
+        .badge-neutral   { background: #EFF6FF; color: #1E40AF; }
+        /* Legacy — keep for old data */
+        .badge-urgent     { background: #FEF2F2; color: #991B1B; }
+        .badge-frustrated { background: #FFFBEB; color: #92400E; }
+
+        /* ── Status badges ── */
+        .badge-status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-pending    { background: #EFF6FF; color: #1E40AF; }
+        .badge-processing { background: #FFFBEB; color: #92400E; }
+        .badge-resolved   { background: #F0FDF4; color: #166534; }
+
+        /* ── Table ── */
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table thead th {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 12px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        .data-table tbody tr {
+            border-bottom: 1px solid #F3F4F6;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .data-table tbody tr:hover { background: #F9FAFB; }
+        .data-table tbody td { padding: 12px; font-size: 14px; }
+        .ticket-id { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+
+        /* ── Sidebar footer ── */
         .sidebar-footer {
             position: absolute;
             bottom: 0;
@@ -129,9 +192,24 @@
                 <i class="bi bi-ticket-perforated"></i> All Tickets
             </a>
         </div>
+        {{-- Updated: Urgent → Negative (panel requirement) --}}
         <div class="nav-item">
-            <a href="{{ route('admin.tickets.index', ['sentiment' => 'Urgent']) }}">
-                <i class="bi bi-exclamation-triangle"></i> Urgent Tickets
+            <a href="{{ route('admin.tickets.index', ['sentiment' => 'Negative']) }}">
+                <i class="bi bi-exclamation-triangle"></i> Negative Tickets
+            </a>
+        </div>
+
+        <div class="nav-section">AI & Analytics</div>
+        {{-- NEW: Chatbot Logs (Module 3 / Module 16) --}}
+        <div class="nav-item">
+            <a href="{{ route('admin.chatbot.logs') }}" class="{{ request()->routeIs('admin.chatbot.*') ? 'active' : '' }}">
+                <i class="bi bi-robot"></i> Chatbot Logs
+            </a>
+        </div>
+        {{-- NEW: Service Analytics (Module 15) --}}
+        <div class="nav-item">
+            <a href="{{ route('admin.analytics') }}" class="{{ request()->routeIs('admin.analytics') ? 'active' : '' }}">
+                <i class="bi bi-bar-chart-line"></i> Service Analytics
             </a>
         </div>
 
@@ -141,14 +219,8 @@
                 <i class="bi bi-question-circle"></i> FAQ Management
             </a>
         </div>
-        <div class="nav-item">
-            <a href="{{ route('admin.analytics') }}" class="{{ request()->routeIs('admin.analytics') ? 'active' : '' }}">
-                <i class="bi bi-bar-chart"></i> Analytics
-            </a>
-        </div>
     </div>
 
-    {{-- ✅ User info + logout sa sidebar footer --}}
     <div class="sidebar-footer">
         <div class="d-flex align-items-center gap-2 mb-2">
             <div class="rounded-circle bg-white d-flex align-items-center justify-content-center" style="width:36px;height:36px;">
@@ -173,7 +245,6 @@
 
 <!-- Main Content -->
 <div class="main-content">
-    {{-- ✅ Topbar — walang Urgent badge na --}}
     <div class="topbar">
         <h6>@yield('title', 'Dashboard')</h6>
         <div class="d-flex align-items-center gap-3">

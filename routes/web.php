@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\TicketController;
 use App\Http\Controllers\Admin\FAQController;
-use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\Admin\ChatbotLogsController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 
@@ -36,6 +36,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::put('/faqs/{faq}', [FAQController::class, 'update'])->name('faqs.update');
     Route::delete('/faqs/{faq}', [FAQController::class, 'destroy'])->name('faqs.destroy');
 
-    // Analytics
+    // Analytics (Module 15 — Service Analytics)
     Route::get('/analytics', [DashboardController::class, 'analytics'])->name('analytics');
+
+    // Chatbot Logs (Module 3 / Module 16)
+    Route::get('/chatbot/logs', [ChatbotLogsController::class, 'index'])->name('chatbot.logs');
+    Route::delete('/chatbot/logs/{id}', [ChatbotLogsController::class, 'destroy'])->name('chatbot.destroy');
 });
