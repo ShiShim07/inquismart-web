@@ -5,7 +5,7 @@
 
 {{-- Stats Row --}}
 <div class="row g-3 mb-4">
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="stat-card">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
@@ -19,7 +19,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="stat-card">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
@@ -33,21 +33,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="stat-card">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <div class="stat-label">Needs Human</div>
-                    <div class="stat-value" style="color:#B45309;">{{ $needsHuman }}</div>
-                    <div class="stat-sub">Awaiting staff reply</div>
-                </div>
-                <div class="stat-icon" style="background:#FFFBEB;">
-                    <i class="bi bi-exclamation-triangle" style="color:#F59E0B;"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="stat-card">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
@@ -65,21 +51,10 @@
     </div>
 </div>
 
-{{-- Needs Human Alert --}}
-@if($needsHuman > 0)
-<div class="alert alert-warning d-flex align-items-center gap-2 mb-4" style="border-radius:12px;">
-    <i class="bi bi-exclamation-triangle-fill fs-5"></i>
-    <div>
-        <strong>{{ $needsHuman }} conversation(s) need your attention!</strong>
-        The bot could not answer — please reply to these customers below.
-    </div>
-</div>
-@endif
-
 {{-- Filters --}}
 <div class="card-surface mb-4">
     <form method="GET" action="{{ route('admin.chatbot.logs') }}" class="row g-3 align-items-end">
-        <div class="col-md-4">
+        <div class="col-md-6">
             <label class="form-label" style="font-size:13px;font-weight:600;">Filter by User</label>
             <select name="user_id" class="form-select form-select-sm">
                 <option value="">All Users</option>
@@ -90,7 +65,7 @@
                 @endforeach
             </select>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <label class="form-label" style="font-size:13px;font-weight:600;">Filter by Intent</label>
             <select name="intent" class="form-select form-select-sm">
                 <option value="">All Intents</option>
@@ -99,13 +74,6 @@
                         {{ ucfirst($intent) }}
                     </option>
                 @endforeach
-            </select>
-        </div>
-        <div class="col-md-3">
-            <label class="form-label" style="font-size:13px;font-weight:600;">Needs Human Reply</label>
-            <select name="needs_human" class="form-select form-select-sm">
-                <option value="">All</option>
-                <option value="1" {{ request('needs_human') == '1' ? 'selected' : '' }}>Needs Human Only</option>
             </select>
         </div>
         <div class="col-md-2 d-flex gap-2">
@@ -119,13 +87,13 @@
     </form>
 </div>
 
-{{-- Conversations Table (grouped by customer) --}}
+{{-- Conversations Table --}}
 <div class="card-surface mb-4">
     <div class="d-flex align-items-center justify-content-between mb-4">
         <h6 class="section-header">
             <i class="bi bi-people"></i> Customer Conversations
         </h6>
-        <span style="font-size:12px;color:var(--text-muted);">Click "View & Reply" to open a conversation</span>
+        <span style="font-size:12px;color:var(--text-muted);">Click "View" to open a conversation</span>
     </div>
 
     <div class="table-responsive">
@@ -156,7 +124,7 @@
                     <td>
                         @if($conv->escalated_count > 0)
                             <span class="badge bg-warning text-dark">
-                                <i class="bi bi-exclamation-triangle me-1"></i>Needs Human
+                                <i class="bi bi-ticket-perforated me-1"></i>Submitted Ticket
                             </span>
                         @else
                             <span class="badge bg-success">
@@ -165,9 +133,10 @@
                         @endif
                     </td>
                     <td>
+                        {{-- View only — no reply --}}
                         <a href="{{ route('admin.chatbot.conversation', $conv->user_id) }}"
                            class="btn btn-sm btn-primary">
-                            <i class="bi bi-chat-text me-1"></i> View & Reply
+                            <i class="bi bi-eye me-1"></i> View
                         </a>
                         <form action="{{ route('admin.chatbot.destroy', $conv->user_id) }}"
                               method="POST" class="d-inline"
@@ -199,7 +168,7 @@
     @endif
 </div>
 
-{{-- Full Message Log (all messages) --}}
+{{-- Full Message Log --}}
 <div class="card-surface">
     <div class="d-flex align-items-center justify-content-between mb-4">
         <h6 class="section-header">
@@ -231,10 +200,6 @@
                             <span class="badge-sentiment badge-neutral">
                                 <i class="bi bi-person-fill me-1"></i>Customer
                             </span>
-                        @elseif($log->role === 'staff')
-                            <span class="badge-sentiment badge-positive">
-                                <i class="bi bi-person-badge me-1"></i>Staff
-                            </span>
                         @else
                             <span style="background:#F5F3FF;color:#7C3AED;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;">
                                 <i class="bi bi-robot me-1"></i>Bot
@@ -244,11 +209,13 @@
                     <td style="color:var(--text-muted);max-width:320px;">
                         {{ Str::limit($log->message, 80) }}
                         @if($log->needs_human)
-                            <span class="badge bg-warning text-dark ms-1" style="font-size:10px;">⚡ Escalated</span>
+                            <span class="badge bg-warning text-dark ms-1" style="font-size:10px;">
+                                🎫 Prompted to Submit Ticket
+                            </span>
                         @endif
                     </td>
                     <td>
-                        @if($log->intent && $log->intent !== 'staff_reply')
+                        @if($log->intent)
                             <span style="background:#F5F3FF;color:#7C3AED;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;">
                                 {{ ucfirst($log->intent) }}
                             </span>
