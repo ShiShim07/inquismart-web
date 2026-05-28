@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ChatHistory;
@@ -13,9 +14,9 @@ use App\Models\ChatHistory;
  * Rule-based NLP chatbot for NAN Cellphone Shop customer inquiries.
  *
  * Endpoints:
- *   POST /api/chatbot/message  — send a message, get a reply
- *   GET  /api/chatbot/history  — retrieve past chat messages
- *   DELETE /api/chatbot/clear  — clear chat history
+ *   POST   /api/chatbot/message  — send a message, get a reply
+ *   GET    /api/chatbot/history  — retrieve past chat messages
+ *   DELETE /api/chatbot/clear    — clear chat history
  */
 class ChatbotController extends Controller
 {
@@ -107,19 +108,21 @@ class ChatbotController extends Controller
         $intent      = $this->detectIntent(strtolower($userMessage));
         $reply       = $this->getResponse($intent);
 
-        // Save to chat history
-        $userId = Auth::id();
-        if ($userId) {
+        // Save to chat history — requires authenticated user
+        $user = $request->user();
+
+        if ($user) {
             ChatHistory::create([
-                'user_id'  => $userId,
-                'role'     => 'user',
-                'message'  => $userMessage,
+                'user_id' => $user->id,
+                'role'    => 'user',
+                'message' => $userMessage,
+                'intent'  => null,
             ]);
             ChatHistory::create([
-                'user_id'  => $userId,
-                'role'     => 'bot',
-                'message'  => $reply,
-                'intent'   => $intent,
+                'user_id' => $user->id,
+                'role'    => 'bot',
+                'message' => $reply,
+                'intent'  => $intent,
             ]);
         }
 
@@ -135,7 +138,7 @@ class ChatbotController extends Controller
      */
     public function history(Request $request)
     {
-        $history = ChatHistory::where('user_id', Auth::id())
+        $history = ChatHistory::where('user_id', $request->user()->id)
             ->orderBy('created_at', 'asc')
             ->limit(50)
             ->get(['role', 'message', 'intent', 'created_at']);
@@ -149,7 +152,7 @@ class ChatbotController extends Controller
      */
     public function clear(Request $request)
     {
-        ChatHistory::where('user_id', Auth::id())->delete();
+        ChatHistory::where('user_id', $request->user()->id)->delete();
         return response()->json(['message' => 'Chat history cleared.']);
     }
 
@@ -162,7 +165,6 @@ class ChatbotController extends Controller
             $score = 0;
             foreach ($keywords as $keyword) {
                 if (str_contains($text, $keyword)) {
-                    // Longer keyword match = higher confidence
                     $score += strlen($keyword);
                 }
             }
@@ -175,7 +177,6 @@ class ChatbotController extends Controller
             return 'fallback';
         }
 
-        // Return the intent with the highest score
         arsort($scores);
         return array_key_first($scores);
     }
