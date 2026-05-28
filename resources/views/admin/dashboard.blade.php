@@ -37,16 +37,16 @@
         <div class="stat-card">
             <div class="d-flex justify-content-between align-items-start">
                 <div>
-                    <div class="stat-label">Urgent</div>
-                    <div class="stat-value" style="color:#991B1B;">{{ $urgentTickets }}</div>
+                    <div class="stat-label">Negative</div>
+                    <div class="stat-value" style="color:#991B1B;">{{ $negativeTickets }}</div>
                     <div class="stat-sub" style="color:#991B1B;">Needs immediate attention</div>
                 </div>
                 <div class="stat-icon" style="background:#FEF2F2;">
                     <i class="bi bi-exclamation-triangle" style="color:#DC2626;"></i>
                 </div>
             </div>
-            {{-- Urgent pulse indicator --}}
-            @if($urgentTickets > 0)
+            {{-- Negative pulse indicator --}}
+            @if($negativeTickets > 0)
             <div style="position:absolute;top:16px;right:16px;width:8px;height:8px;background:#EF4444;border-radius:50%;box-shadow:0 0 0 3px rgba(239,68,68,0.2);"></div>
             @endif
         </div>
@@ -113,24 +113,27 @@
         <span style="font-size:11.5px;color:var(--text-muted);">Active tickets only</span>
     </div>
     <div class="row g-3">
+        {{-- Negative --}}
         <div class="col-md-4">
             <div style="background:#FEF2F2;border-radius:12px;padding:20px;border:1px solid #FECACA;text-align:center;">
-                <div style="font-size:26px;font-weight:600;color:#991B1B;letter-spacing:-0.5px;">{{ $urgentTickets }}</div>
+                <div style="font-size:26px;font-weight:600;color:#991B1B;letter-spacing:-0.5px;">{{ $negativeTickets }}</div>
                 <div style="font-size:13px;font-weight:600;color:#991B1B;margin:4px 0 6px;display:flex;align-items:center;justify-content:center;gap:5px;">
-                    <span style="width:8px;height:8px;background:#EF4444;border-radius:50%;display:inline-block;"></span> Urgent
+                    <span style="width:8px;height:8px;background:#EF4444;border-radius:50%;display:inline-block;"></span> Negative
                 </div>
-                <div style="font-size:11.5px;color:#B91C1C;">Immediate attention needed</div>
+                <div style="font-size:11.5px;color:#B91C1C;">Needs immediate attention</div>
             </div>
         </div>
+        {{-- Positive --}}
         <div class="col-md-4">
-            <div style="background:#FFFBEB;border-radius:12px;padding:20px;border:1px solid #FCD34D;text-align:center;">
-                <div style="font-size:26px;font-weight:600;color:#92400E;letter-spacing:-0.5px;">{{ $frustratedTickets }}</div>
-                <div style="font-size:13px;font-weight:600;color:#92400E;margin:4px 0 6px;display:flex;align-items:center;justify-content:center;gap:5px;">
-                    <span style="width:8px;height:8px;background:#F59E0B;border-radius:50%;display:inline-block;"></span> Frustrated
+            <div style="background:#F0FDF4;border-radius:12px;padding:20px;border:1px solid #BBF7D0;text-align:center;">
+                <div style="font-size:26px;font-weight:600;color:#166534;letter-spacing:-0.5px;">{{ $positiveTickets }}</div>
+                <div style="font-size:13px;font-weight:600;color:#166534;margin:4px 0 6px;display:flex;align-items:center;justify-content:center;gap:5px;">
+                    <span style="width:8px;height:8px;background:#22C55E;border-radius:50%;display:inline-block;"></span> Positive
                 </div>
-                <div style="font-size:11.5px;color:#B45309;">Customer needs reassurance</div>
+                <div style="font-size:11.5px;color:#15803D;">Customer is satisfied</div>
             </div>
         </div>
+        {{-- Neutral --}}
         <div class="col-md-4">
             <div style="background:#EFF6FF;border-radius:12px;padding:20px;border:1px solid #BFDBFE;text-align:center;">
                 <div style="font-size:26px;font-weight:600;color:#1E40AF;letter-spacing:-0.5px;">{{ $neutralTickets }}</div>
