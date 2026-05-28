@@ -45,9 +45,11 @@ class ChatbotController extends Controller
         'goodbye'     => ["Goodbye! 👋 Thank you for contacting NAN Cellphone Shop!", "Take care! 😊 We're always here to help!"],
         'price'       => ["💰 **Pricing:**\n\nPrices vary by model. For current prices:\n📱 Visit our shop at Greenhills\n📩 Or submit a ticket with the specific model!"],
         'status'      => ["🔍 **Check Ticket/Repair Status:**\n\n1. Open the app\n2. Tap **My Tickets**\n3. Select your ticket for full status and staff response"],
+
+        // UPDATED: Removed "flagged for staff" — bot-only na, redirect to Submit Ticket
         'fallback'    => [
-            "I'm not quite sure about that. 🤔\n\nI can help with:\n• Warranties • Repairs • Payments\n• Returns • Location & Hours • Trade-in\n\n⚡ I've flagged this for a staff member to follow up with you shortly!",
-            "Hmm, I don't have information on that yet. 😅\n\n⚡ I've notified our staff to assist you. You can also tap **Submit Ticket** for faster support!",
+            "I'm not quite sure about that. 🤔\n\nI can help with:\n• Warranties • Repairs • Payments\n• Returns • Location & Hours • Trade-in\n\nFor other concerns, please submit a support ticket using the button below.",
+            "Hmm, I don't have information on that yet. 😅\n\nPlease submit a support ticket so our staff can assist you within 24 hours!",
         ],
     ];
 
@@ -63,6 +65,7 @@ class ChatbotController extends Controller
         $user        = $request->user();
 
         if ($user) {
+            // Save customer message
             ChatHistory::create([
                 'user_id'          => $user->id,
                 'role'             => 'user',
@@ -72,6 +75,7 @@ class ChatbotController extends Controller
                 'needs_human'      => false,
             ]);
 
+            // Save bot reply
             ChatHistory::create([
                 'user_id'          => $user->id,
                 'role'             => 'bot',
@@ -84,7 +88,7 @@ class ChatbotController extends Controller
 
         return response()->json([
             'reply'       => $reply,
-            'intent'      => $intent,
+            'intent'      => $intent,   // Flutter uses this to detect fallback
             'needs_human' => $isFallback,
         ]);
     }
@@ -93,6 +97,7 @@ class ChatbotController extends Controller
     public function history(Request $request)
     {
         $history = ChatHistory::where('user_id', $request->user()->id)
+            ->whereIn('role', ['user', 'bot']) // bot-only — exclude staff role
             ->orderBy('created_at', 'asc')
             ->limit(100)
             ->get(['role', 'message', 'intent', 'needs_human', 'created_at']);

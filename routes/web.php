@@ -41,10 +41,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // Analytics (Module 15)
     Route::get('/analytics', [DashboardController::class, 'analytics'])->name('analytics');
 
-    // Chatbot Logs + Human Handoff (Module 3 / 16 / 17)
+    // Chatbot Logs (Module 3 / 16)
+    // NOTE: Removed chatbot.reply route — bot-only na, walang staff reply sa chatbot
     Route::get('/chatbot/logs', [ChatbotLogsController::class, 'index'])->name('chatbot.logs');
     Route::get('/chatbot/{userId}/conversation', [ChatbotLogsController::class, 'conversation'])->name('chatbot.conversation');
-    Route::post('/chatbot/{userId}/reply', [ChatbotLogsController::class, 'reply'])->name('chatbot.reply');
     Route::delete('/chatbot/{userId}', [ChatbotLogsController::class, 'destroy'])->name('chatbot.destroy');
 
 });
