@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ChatbotLogsController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 
+
 // Redirect root to login
 Route::get('/', function () {
     return redirect()->route('login');
@@ -30,6 +31,12 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/tickets/{ticket}/respond', [TicketController::class, 'respond'])->name('tickets.respond');
     Route::patch('/tickets/{ticket}/status', [TicketController::class, 'updateStatus'])->name('tickets.status');
 
+    //Chatbot Logs
+    Route::get('/chatbot/logs', [ChatbotLogsController::class, 'index'])->name('chatbot.logs');
+    Route::get('/chatbot/{userId}/conversation', [ChatbotLogsController::class, 'conversation'])->name('chatbot.conversation');
+    Route::post('/chatbot/{userId}/reply', [ChatbotLogsController::class, 'reply'])->name('chatbot.reply');
+    Route::delete('/chatbot/{userId}', [ChatbotLogsController::class, 'destroy'])->name('chatbot.destroy');
+    
     // FAQs
     Route::get('/faqs', [FAQController::class, 'index'])->name('faqs.index');
     Route::post('/faqs', [FAQController::class, 'store'])->name('faqs.store');
