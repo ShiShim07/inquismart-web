@@ -56,6 +56,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Create Sample Tickets
+        // Updated: Urgent/Frustrated → Negative, per panel requirement
         Ticket::create([
             'user_id' => $customer1->id,
             'subject' => 'iPhone 15 warranty question',
@@ -71,7 +72,7 @@ class DatabaseSeeder extends Seeder
             'subject' => 'Samsung Galaxy S24 price inquiry - URGENT',
             'description' => 'I need to know ASAP the price of Samsung Galaxy S24 Ultra. I need to buy it today for a gift!',
             'status' => 'Processing',
-            'sentiment' => 'Urgent',
+            'sentiment' => 'Negative', // was: Urgent
         ]);
 
         Ticket::create([
@@ -79,7 +80,7 @@ class DatabaseSeeder extends Seeder
             'subject' => 'Earphones availability',
             'description' => 'Do you have AirPods Pro 2nd gen in stock? I have been trying to reach you through Facebook but no reply.',
             'status' => 'Pending',
-            'sentiment' => 'Frustrated',
+            'sentiment' => 'Negative', // was: Frustrated
         ]);
 
         Ticket::create([
@@ -97,7 +98,7 @@ class DatabaseSeeder extends Seeder
             'subject' => 'Defective phone - need replacement NOW',
             'description' => 'I bought a phone 3 days ago and it keeps restarting. This is unacceptable! I need a replacement immediately!',
             'status' => 'Pending',
-            'sentiment' => 'Urgent',
+            'sentiment' => 'Negative', // was: Urgent
         ]);
 
         // Create Sample FAQs
