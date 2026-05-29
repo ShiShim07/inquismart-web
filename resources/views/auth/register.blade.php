@@ -199,7 +199,7 @@
     </form>
 
     <button type="button" onclick="window.location='{{ route('login') }}'" class="btn-primary" style="background:transparent;color:#1565C0;border:1.5px solid #BFDBFE;margin-top:10px;">
-        <i class="bi bi-arrow-left"></i> Back to Sign In
+         Back to Sign In
     </button>
 
 </div>
