@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InquiSmart — Staff Login</title>
+    <title>InquiSmart — Sign In</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -11,392 +11,372 @@
 
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #0f2e6e 0%, #1549A3 50%, #1B5FC4 100%);
+            background: linear-gradient(135deg, #0D47A1 0%, #1565C0 50%, #1976D2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             padding: 20px;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* Animated background dots */
+        /* Background decorative circles */
         body::before {
             content: '';
-            position: fixed;
-            inset: 0;
-            background-image:
-                radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05) 1px, transparent 1px),
-                radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05) 1px, transparent 1px);
-            background-size: 60px 60px;
-            pointer-events: none;
+            position: absolute;
+            width: 500px; height: 500px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 50%;
+            top: -150px; right: -150px;
+        }
+        body::after {
+            content: '';
+            position: absolute;
+            width: 350px; height: 350px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 50%;
+            bottom: -100px; left: -100px;
         }
 
         .login-wrapper {
+            display: flex;
             width: 100%;
-            max-width: 460px;
+            max-width: 900px;
+            min-height: 560px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 32px 80px rgba(0,0,0,0.35);
             position: relative;
             z-index: 1;
         }
 
-        /* Brand header */
-        .brand-section {
-            text-align: center;
-            margin-bottom: 28px;
+        /* Left Panel */
+        .left-panel {
+            flex: 1;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px);
+            padding: 48px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid rgba(255,255,255,0.1);
         }
 
         .brand-logo {
-            width: 72px;
-            height: 72px;
-            background: rgba(255,255,255,0.15);
-            border-radius: 20px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 14px;
-            border: 1.5px solid rgba(255,255,255,0.25);
-            backdrop-filter: blur(10px);
+            width: 64px; height: 64px;
+            background: white;
+            border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         }
+        .brand-logo i { font-size: 30px; color: #1565C0; }
 
-        .brand-logo i {
-            font-size: 32px;
-            color: #fff;
-        }
-
-        .brand-name {
-            font-size: 26px;
-            font-weight: 700;
-            color: #fff;
+        .brand-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: white;
             letter-spacing: -0.5px;
-            display: block;
+            margin-bottom: 6px;
         }
 
         .brand-sub {
-            font-size: 13px;
+            font-size: 14px;
             color: rgba(255,255,255,0.65);
-            margin-top: 3px;
-            display: block;
+            margin-bottom: 40px;
+            line-height: 1.5;
         }
 
-        /* Card */
-        .login-card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 36px 36px 32px;
-            box-shadow: 0 24px 60px rgba(0,0,0,0.25), 0 4px 16px rgba(0,0,0,0.1);
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
         }
 
-        .card-title {
-            font-size: 18px;
+        .feature-icon {
+            width: 40px; height: 40px;
+            background: rgba(255,255,255,0.12);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .feature-icon i { color: white; font-size: 18px; }
+
+        .feature-text { color: rgba(255,255,255,0.8); font-size: 13.5px; line-height: 1.4; }
+        .feature-text strong { color: white; display: block; font-size: 14px; margin-bottom: 2px; }
+
+        /* Right Panel */
+        .right-panel {
+            flex: 1;
+            background: #F8FAFC;
+            padding: 48px 44px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-title {
+            font-size: 22px;
             font-weight: 700;
-            color: #1a1a2e;
+            color: #0F172A;
             margin-bottom: 4px;
+            letter-spacing: -0.3px;
         }
 
-        .card-subtitle {
-            font-size: 13px;
-            color: #6b7280;
-            margin-bottom: 26px;
+        .form-subtitle {
+            font-size: 14px;
+            color: #64748B;
+            margin-bottom: 32px;
         }
 
-        /* Form */
-        .form-label {
+        .form-label-custom {
             font-size: 13px;
             font-weight: 600;
             color: #374151;
             margin-bottom: 6px;
+            display: block;
         }
 
-        .form-control {
-            height: 46px;
-            border: 1.5px solid #e5e7eb;
+        .input-group-custom {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px; top: 50%;
+            transform: translateY(-50%);
+            color: #94A3B8;
+            font-size: 17px;
+            z-index: 2;
+        }
+
+        .form-control-custom {
+            width: 100%;
+            padding: 12px 14px 12px 42px;
+            border: 1.5px solid #E2E8F0;
             border-radius: 10px;
             font-size: 14px;
-            color: #1a1a2e;
-            padding: 0 14px;
+            color: #0F172A;
+            background: white;
             transition: all 0.2s;
-            background: #f9fafb;
-        }
-
-        .form-control:focus {
-            border-color: #1549A3;
-            background: #fff;
-            box-shadow: 0 0 0 3px rgba(21,73,163,0.1);
             outline: none;
+            font-family: inherit;
         }
 
-        .input-group .form-control {
-            border-right: none;
-            border-radius: 10px 0 0 10px;
+        .form-control-custom:focus {
+            border-color: #1565C0;
+            box-shadow: 0 0 0 3px rgba(21,101,192,0.1);
         }
 
-        .input-group-text {
-            border: 1.5px solid #e5e7eb;
-            border-left: none;
-            border-radius: 0 10px 10px 0;
-            background: #f9fafb;
-            cursor: pointer;
-            padding: 0 14px;
-            color: #6b7280;
-            transition: all 0.2s;
-        }
+        .form-control-custom::placeholder { color: #CBD5E1; }
 
-        .input-group:focus-within .form-control,
-        .input-group:focus-within .input-group-text {
-            border-color: #1549A3;
-            background: #fff;
+        .password-toggle {
+            position: absolute;
+            right: 14px; top: 50%;
+            transform: translateY(-50%);
+            background: none; border: none;
+            color: #94A3B8; cursor: pointer;
+            font-size: 17px; padding: 0;
+            z-index: 2;
         }
+        .password-toggle:hover { color: #1565C0; }
 
-        .input-group:focus-within {
-            box-shadow: 0 0 0 3px rgba(21,73,163,0.1);
-            border-radius: 10px;
-        }
-
-        .input-group:focus-within .form-control {
-            box-shadow: none;
-        }
-
-        /* Remember me */
-        .remember-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: 16px 0 22px;
-        }
-
-        .form-check-input {
-            width: 16px;
-            height: 16px;
-            border: 1.5px solid #d1d5db;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .form-check-input:checked {
-            background-color: #1549A3;
-            border-color: #1549A3;
-        }
-
-        .form-check-label {
-            font-size: 13px;
-            color: #6b7280;
-            margin-left: 6px;
-            cursor: pointer;
-        }
-
-        /* Button */
         .btn-login {
             width: 100%;
-            height: 48px;
-            background: linear-gradient(135deg, #1549A3, #1B5FC4);
-            color: #fff;
+            padding: 13px;
+            background: linear-gradient(135deg, #1565C0, #1976D2);
+            color: white;
             border: none;
             border-radius: 10px;
             font-size: 15px;
             font-weight: 600;
-            letter-spacing: 0.2px;
-            transition: all 0.2s;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            transition: all 0.2s;
+            margin-top: 8px;
+            font-family: inherit;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-
         .btn-login:hover {
-            background: linear-gradient(135deg, #0f3d8a, #1549A3);
+            background: linear-gradient(135deg, #0D47A1, #1565C0);
             transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(21,73,163,0.35);
+            box-shadow: 0 8px 20px rgba(21,101,192,0.35);
         }
-
         .btn-login:active { transform: translateY(0); }
 
-        /* Divider */
-        .divider {
-            text-align: center;
-            position: relative;
-            margin: 22px 0;
-        }
-
-        .divider::before {
-            content: '';
-            position: absolute;
-            left: 0; right: 0; top: 50%;
-            height: 1px;
-            background: #e5e7eb;
-        }
-
-        .divider span {
-            background: #fff;
-            padding: 0 12px;
-            font-size: 12px;
-            color: #9ca3af;
-            position: relative;
-        }
-
-        /* Staff badge */
-        .staff-badge {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #EFF6FF;
-            border: 1px solid #BFDBFE;
-            border-radius: 10px;
-            padding: 10px 14px;
-            font-size: 12.5px;
-            color: #1E40AF;
-            font-weight: 500;
-        }
-
-        /* Error */
-        .alert-error {
+        .error-msg {
             background: #FEF2F2;
             border: 1px solid #FECACA;
-            border-radius: 10px;
-            padding: 12px 14px;
+            border-radius: 8px;
+            padding: 10px 14px;
             font-size: 13px;
             color: #DC2626;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            margin-bottom: 16px;
+            display: flex; align-items: center; gap: 8px;
         }
 
-        .invalid-feedback-custom {
-            font-size: 12px;
-            color: #DC2626;
-            margin-top: 5px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+        .divider {
+            display: flex; align-items: center; gap: 12px;
+            margin: 20px 0;
+        }
+        .divider hr { flex: 1; border: none; border-top: 1px solid #E2E8F0; }
+        .divider span { font-size: 12px; color: #94A3B8; white-space: nowrap; }
+
+        .badge-role {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
         }
 
-        /* Footer */
-        .login-footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 12px;
-            color: rgba(255,255,255,0.5);
+        @media (max-width: 640px) {
+            .left-panel { display: none; }
+            .right-panel { padding: 36px 28px; }
+            .login-wrapper { max-width: 420px; }
         }
     </style>
 </head>
 <body>
 
 <div class="login-wrapper">
-    <!-- Brand -->
-    <div class="brand-section">
+    <!-- Left Panel -->
+    <div class="left-panel">
         <div class="brand-logo">
             <i class="bi bi-headset"></i>
         </div>
-        <span class="brand-name">InquiSmart</span>
-        <span class="brand-sub">Customer Helpdesk System — NAN Cellphone Shop</span>
+        <div class="brand-title">InquiSmart</div>
+        <div class="brand-sub">Customer Helpdesk System<br>NaN Cellphone Shop — Greenhills</div>
+
+        <div class="feature-item">
+            <div class="feature-icon"><i class="bi bi-robot"></i></div>
+            <div class="feature-text">
+                <strong>AI Sentiment Analysis</strong>
+                Auto-classifies tickets as Positive, Negative, or Neutral
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon"><i class="bi bi-chat-dots"></i></div>
+            <div class="feature-text">
+                <strong>Chatbot Engine</strong>
+                Rule-based NLP assistant for customer inquiries
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon"><i class="bi bi-bar-chart-line"></i></div>
+            <div class="feature-text">
+                <strong>Service Analytics</strong>
+                Predictive inquiry recommendations & trends
+            </div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon"><i class="bi bi-ticket-perforated"></i></div>
+            <div class="feature-text">
+                <strong>Ticket Management</strong>
+                Real-time tracking and staff response system
+            </div>
+        </div>
     </div>
 
-    <!-- Card -->
-    <div class="login-card">
-        <div class="card-title">Welcome back 👋</div>
-        <div class="card-subtitle">Sign in to your staff account to continue</div>
+    <!-- Right Panel -->
+    <div class="right-panel">
+        <div class="form-title">Welcome back 👋</div>
+        <div class="form-subtitle">Sign in to your InquiSmart account</div>
 
-        <!-- Session Status -->
-        @if (session('status'))
-            <div class="alert-error">
-                <i class="bi bi-info-circle-fill"></i>
-                {{ session('status') }}
-            </div>
+        {{-- Error Messages --}}
+        @if($errors->any())
+        <div class="error-msg">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            {{ $errors->first() }}
+        </div>
         @endif
 
-        <!-- Validation Errors -->
-        @if ($errors->any())
-            <div class="alert-error">
-                <i class="bi bi-exclamation-triangle-fill"></i>
-                {{ $errors->first() }}
-            </div>
+        @if(session('status'))
+        <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:10px 14px;font-size:13px;color:#166534;margin-bottom:16px;">
+            <i class="bi bi-check-circle-fill me-2"></i>{{ session('status') }}
+        </div>
         @endif
 
         <form method="POST" action="{{ route('login') }}">
             @csrf
 
-            <!-- Email -->
-            <div class="mb-3">
-                <label for="email" class="form-label">Email address</label>
-                <div class="input-group">
-                    <span class="input-group-text" style="border-right:none;border-left:1.5px solid #e5e7eb;border-radius:10px 0 0 10px;order:-1;">
-                        <i class="bi bi-envelope"></i>
-                    </span>
-                    <input id="email" type="email" name="email" value="{{ old('email') }}"
-                        class="form-control" placeholder="staff@nancellphone.com"
-                        required autofocus autocomplete="username"
-                        style="border-left:none;border-radius:0 10px 10px 0;">
-                </div>
-                @error('email')
-                    <div class="invalid-feedback-custom"><i class="bi bi-x-circle"></i> {{ $message }}</div>
-                @enderror
+            <label class="form-label-custom">Email address</label>
+            <div class="input-group-custom">
+                <i class="bi bi-envelope input-icon"></i>
+                <input
+                    type="email"
+                    name="email"
+                    class="form-control-custom"
+                    placeholder="admin@nancellphone.com"
+                    value="{{ old('email') }}"
+                    required autofocus
+                >
             </div>
 
-            <!-- Password -->
-            <div class="mb-0">
-                <label for="password" class="form-label">Password</label>
-                <div class="input-group">
-                    <span class="input-group-text" style="border-right:none;border-left:1.5px solid #e5e7eb;border-radius:10px 0 0 10px;order:-1;">
-                        <i class="bi bi-lock"></i>
-                    </span>
-                    <input id="password" type="password" name="password"
-                        class="form-control" placeholder="Enter your password"
-                        required autocomplete="current-password"
-                        style="border-left:none;border-right:none;border-radius:0;">
-                    <span class="input-group-text" onclick="togglePassword()" style="cursor:pointer;">
-                        <i class="bi bi-eye" id="eyeIcon"></i>
-                    </span>
-                </div>
-                @error('password')
-                    <div class="invalid-feedback-custom"><i class="bi bi-x-circle"></i> {{ $message }}</div>
-                @enderror
+            <label class="form-label-custom">Password</label>
+            <div class="input-group-custom" style="margin-bottom:8px;">
+                <i class="bi bi-lock input-icon"></i>
+                <input
+                    type="password"
+                    name="password"
+                    id="passwordInput"
+                    class="form-control-custom"
+                    placeholder="Enter your password"
+                    required
+                    style="padding-right:42px;"
+                >
+                <button type="button" class="password-toggle" onclick="togglePassword()">
+                    <i class="bi bi-eye-slash" id="eyeIcon"></i>
+                </button>
             </div>
 
-            <!-- Remember Me -->
-            <div class="remember-row">
-                <div class="form-check d-flex align-items-center gap-2">
-                    <input id="remember_me" type="checkbox" class="form-check-input" name="remember">
-                    <label for="remember_me" class="form-check-label">Remember me</label>
-                </div>
-                @if (Route::has('password.request'))
-                    <a href="{{ route('password.request') }}" style="font-size:13px;color:#1549A3;text-decoration:none;font-weight:500;">
-                        Forgot password?
-                    </a>
-                @endif
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                    <input type="checkbox" name="remember" style="accent-color:#1565C0;width:14px;height:14px;">
+                    <span style="font-size:13px;color:#64748B;">Remember me</span>
+                </label>
             </div>
 
             <button type="submit" class="btn-login">
                 <i class="bi bi-box-arrow-in-right"></i>
-                Sign In to Dashboard
+                Sign In
             </button>
         </form>
 
-        <div class="divider"><span>Staff access only</span></div>
-
-        <div class="staff-badge">
-            <i class="bi bi-shield-check-fill" style="color:#1549A3;font-size:16px;"></i>
-            <span>This portal is for authorized NAN CS staff members only. Customer access is via the mobile app.</span>
+        <div class="divider">
+            <hr><span>Staff access only</span><hr>
         </div>
-    </div>
 
-    <div class="login-footer">
-        © 2026 InquiSmart · NAN Cellphone Shop · All rights reserved
+        <div style="background:#F1F5F9;border-radius:10px;padding:14px 16px;">
+            <div style="font-size:12px;color:#64748B;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Demo Accounts</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+                <div style="font-size:12.5px;color:#374151;">
+                    <span class="badge-role" style="background:#DBEAFE;color:#1E40AF;">Admin</span>
+                    <span style="margin-left:8px;">admin@nancellphone.com / admin123</span>
+                </div>
+                <div style="font-size:12.5px;color:#374151;">
+                    <span class="badge-role" style="background:#D1FAE5;color:#065F46;">Staff</span>
+                    <span style="margin-left:8px;">staff@nancellphone.com / staff123</span>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
 function togglePassword() {
-    const pwd = document.getElementById('password');
-    const icon = document.getElementById('eyeIcon');
-    if (pwd.type === 'password') {
-        pwd.type = 'text';
-        icon.className = 'bi bi-eye-slash';
-    } else {
-        pwd.type = 'password';
+    const input = document.getElementById('passwordInput');
+    const icon  = document.getElementById('eyeIcon');
+    if (input.type === 'password') {
+        input.type = 'text';
         icon.className = 'bi bi-eye';
+    } else {
+        input.type = 'password';
+        icon.className = 'bi bi-eye-slash';
     }
 }
 </script>
-
 </body>
 </html>

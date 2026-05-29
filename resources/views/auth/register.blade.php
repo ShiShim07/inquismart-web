@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InquiSmart — Create Staff Account</title>
+    <title>InquiSmart — Create Account</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -11,374 +11,288 @@
 
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, #0f2e6e 0%, #1549A3 50%, #1B5FC4 100%);
+            background: linear-gradient(135deg, #0D47A1 0%, #1565C0 50%, #1976D2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             padding: 20px;
+            position: relative;
+            overflow: hidden;
         }
 
         body::before {
             content: '';
-            position: fixed;
-            inset: 0;
-            background-image:
-                radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05) 1px, transparent 1px),
-                radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05) 1px, transparent 1px);
-            background-size: 60px 60px;
-            pointer-events: none;
+            position: absolute;
+            width: 500px; height: 500px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 50%;
+            top: -150px; right: -150px;
+        }
+        body::after {
+            content: '';
+            position: absolute;
+            width: 350px; height: 350px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 50%;
+            bottom: -100px; left: -100px;
         }
 
         .register-wrapper {
             width: 100%;
             max-width: 480px;
+            background: #F8FAFC;
+            border-radius: 24px;
+            padding: 44px 44px;
+            box-shadow: 0 32px 80px rgba(0,0,0,0.35);
             position: relative;
             z-index: 1;
         }
 
-        .brand-section {
+        .brand-header {
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 32px;
         }
 
         .brand-logo {
-            width: 68px;
-            height: 68px;
-            background: rgba(255,255,255,0.15);
-            border-radius: 18px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 12px;
-            border: 1.5px solid rgba(255,255,255,0.25);
-            backdrop-filter: blur(10px);
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, #1565C0, #1976D2);
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 8px 24px rgba(21,101,192,0.3);
         }
+        .brand-logo i { font-size: 28px; color: white; }
 
-        .brand-logo i { font-size: 30px; color: #fff; }
-
-        .brand-name {
-            font-size: 24px;
+        .form-title {
+            font-size: 22px;
             font-weight: 700;
-            color: #fff;
-            letter-spacing: -0.5px;
-            display: block;
-        }
-
-        .brand-sub {
-            font-size: 12.5px;
-            color: rgba(255,255,255,0.65);
-            margin-top: 3px;
-            display: block;
-        }
-
-        .register-card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 32px 36px 28px;
-            box-shadow: 0 24px 60px rgba(0,0,0,0.25), 0 4px 16px rgba(0,0,0,0.1);
-        }
-
-        .card-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1a1a2e;
+            color: #0F172A;
             margin-bottom: 4px;
+            letter-spacing: -0.3px;
         }
 
-        .card-subtitle {
-            font-size: 13px;
-            color: #6b7280;
-            margin-bottom: 22px;
+        .form-subtitle {
+            font-size: 14px;
+            color: #64748B;
         }
 
-        .form-label {
+        .form-label-custom {
             font-size: 13px;
             font-weight: 600;
             color: #374151;
             margin-bottom: 6px;
+            display: block;
         }
 
-        .form-control {
-            height: 44px;
-            border: 1.5px solid #e5e7eb;
+        .input-group-custom {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px; top: 50%;
+            transform: translateY(-50%);
+            color: #94A3B8;
+            font-size: 17px;
+            z-index: 2;
+        }
+
+        .form-control-custom {
+            width: 100%;
+            padding: 12px 14px 12px 42px;
+            border: 1.5px solid #E2E8F0;
             border-radius: 10px;
             font-size: 14px;
-            color: #1a1a2e;
-            padding: 0 14px;
+            color: #0F172A;
+            background: white;
             transition: all 0.2s;
-            background: #f9fafb;
-        }
-
-        .form-control:focus {
-            border-color: #1549A3;
-            background: #fff;
-            box-shadow: 0 0 0 3px rgba(21,73,163,0.1);
             outline: none;
+            font-family: inherit;
         }
 
-        .input-icon-wrap {
-            position: relative;
+        .form-control-custom:focus {
+            border-color: #1565C0;
+            box-shadow: 0 0 0 3px rgba(21,101,192,0.1);
         }
 
-        .input-icon-wrap .bi {
+        .form-control-custom::placeholder { color: #CBD5E1; }
+
+        .password-toggle {
             position: absolute;
-            left: 13px;
-            top: 50%;
+            right: 14px; top: 50%;
             transform: translateY(-50%);
-            color: #9ca3af;
-            font-size: 15px;
-            pointer-events: none;
+            background: none; border: none;
+            color: #94A3B8; cursor: pointer;
+            font-size: 17px; padding: 0; z-index: 2;
         }
-
-        .input-icon-wrap .form-control {
-            padding-left: 38px;
-        }
-
-        .input-icon-wrap .toggle-pw {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #9ca3af;
-            cursor: pointer;
-            font-size: 15px;
-            pointer-events: all;
-        }
-
-        .invalid-feedback-custom {
-            font-size: 12px;
-            color: #DC2626;
-            margin-top: 5px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .alert-error {
-            background: #FEF2F2;
-            border: 1px solid #FECACA;
-            border-radius: 10px;
-            padding: 12px 14px;
-            font-size: 13px;
-            color: #DC2626;
-            margin-bottom: 18px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Password strength */
-        .password-strength {
-            margin-top: 6px;
-            display: flex;
-            gap: 4px;
-        }
-
-        .strength-bar {
-            height: 3px;
-            flex: 1;
-            border-radius: 2px;
-            background: #e5e7eb;
-            transition: background 0.3s;
-        }
-
-        .strength-bar.weak   { background: #EF4444; }
-        .strength-bar.medium { background: #F59E0B; }
-        .strength-bar.strong { background: #22C55E; }
+        .password-toggle:hover { color: #1565C0; }
 
         .btn-register {
             width: 100%;
-            height: 48px;
-            background: linear-gradient(135deg, #1549A3, #1B5FC4);
-            color: #fff;
+            padding: 13px;
+            background: linear-gradient(135deg, #1565C0, #1976D2);
+            color: white;
             border: none;
             border-radius: 10px;
             font-size: 15px;
             font-weight: 600;
-            transition: all 0.2s;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 20px;
+            transition: all 0.2s;
+            margin-top: 8px;
+            font-family: inherit;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-
         .btn-register:hover {
-            background: linear-gradient(135deg, #0f3d8a, #1549A3);
+            background: linear-gradient(135deg, #0D47A1, #1565C0);
             transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(21,73,163,0.35);
+            box-shadow: 0 8px 20px rgba(21,101,192,0.35);
         }
 
-        .btn-register:active { transform: translateY(0); }
+        .error-msg {
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #DC2626;
+            margin-bottom: 16px;
+            display: flex; align-items: center; gap: 8px;
+        }
 
         .login-link {
             text-align: center;
-            margin-top: 18px;
-            font-size: 13px;
-            color: #6b7280;
+            margin-top: 20px;
+            font-size: 13.5px;
+            color: #64748B;
         }
 
         .login-link a {
-            color: #1549A3;
+            color: #1565C0;
             font-weight: 600;
             text-decoration: none;
         }
-
         .login-link a:hover { text-decoration: underline; }
 
-        .login-footer {
-            text-align: center;
-            margin-top: 18px;
-            font-size: 12px;
-            color: rgba(255,255,255,0.5);
+        .field-hint {
+            font-size: 11.5px;
+            color: #94A3B8;
+            margin-top: 4px;
         }
 
-        .row-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-        @media (max-width: 480px) { .row-fields { grid-template-columns: 1fr; } }
+        @media (max-width: 520px) {
+            .register-wrapper { padding: 32px 24px; }
+        }
     </style>
 </head>
 <body>
 
 <div class="register-wrapper">
-    <!-- Brand -->
-    <div class="brand-section">
+    <div class="brand-header">
         <div class="brand-logo">
             <i class="bi bi-headset"></i>
         </div>
-        <span class="brand-name">InquiSmart</span>
-        <span class="brand-sub">Customer Helpdesk System — NAN Cellphone Shop</span>
+        <div class="form-title">Create account</div>
+        <div class="form-subtitle">Join InquiSmart — NaN Cellphone Shop</div>
     </div>
 
-    <!-- Card -->
-    <div class="register-card">
-        <div class="card-title">Create staff account 🛡️</div>
-        <div class="card-subtitle">Register to access the InquiSmart admin panel</div>
+    {{-- Error Messages --}}
+    @if($errors->any())
+    <div class="error-msg">
+        <i class="bi bi-exclamation-circle-fill"></i>
+        {{ $errors->first() }}
+    </div>
+    @endif
 
-        @if ($errors->any())
-            <div class="alert-error">
-                <i class="bi bi-exclamation-triangle-fill"></i>
-                {{ $errors->first() }}
-            </div>
-        @endif
+    <form method="POST" action="{{ route('register') }}">
+        @csrf
 
-        <form method="POST" action="{{ route('register') }}">
-            @csrf
-
-            <!-- Name -->
-            <div class="mb-3">
-                <label for="name" class="form-label">Full Name</label>
-                <div class="input-icon-wrap">
-                    <i class="bi bi-person"></i>
-                    <input id="name" type="text" name="name" value="{{ old('name') }}"
-                        class="form-control" placeholder="Enter your full name"
-                        required autofocus autocomplete="name">
-                </div>
-                @error('name')
-                    <div class="invalid-feedback-custom"><i class="bi bi-x-circle"></i> {{ $message }}</div>
-                @enderror
-            </div>
-
-            <!-- Email -->
-            <div class="mb-3">
-                <label for="email" class="form-label">Email Address</label>
-                <div class="input-icon-wrap">
-                    <i class="bi bi-envelope"></i>
-                    <input id="email" type="email" name="email" value="{{ old('email') }}"
-                        class="form-control" placeholder="staff@nancellphone.com"
-                        required autocomplete="username">
-                </div>
-                @error('email')
-                    <div class="invalid-feedback-custom"><i class="bi bi-x-circle"></i> {{ $message }}</div>
-                @enderror
-            </div>
-
-            <!-- Password -->
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <div class="input-icon-wrap">
-                    <i class="bi bi-lock"></i>
-                    <input id="password" type="password" name="password"
-                        class="form-control" placeholder="Create a strong password"
-                        required autocomplete="new-password"
-                        oninput="checkStrength(this.value)"
-                        style="padding-right: 38px;">
-                    <i class="bi bi-eye toggle-pw" onclick="togglePw('password', 'eye1');" id="eye1"></i>
-                </div>
-                <!-- Strength bars -->
-                <div class="password-strength" id="strengthBars">
-                    <div class="strength-bar" id="bar1"></div>
-                    <div class="strength-bar" id="bar2"></div>
-                    <div class="strength-bar" id="bar3"></div>
-                    <div class="strength-bar" id="bar4"></div>
-                </div>
-                @error('password')
-                    <div class="invalid-feedback-custom"><i class="bi bi-x-circle"></i> {{ $message }}</div>
-                @enderror
-            </div>
-
-            <!-- Confirm Password -->
-            <div class="mb-0">
-                <label for="password_confirmation" class="form-label">Confirm Password</label>
-                <div class="input-icon-wrap">
-                    <i class="bi bi-lock-fill"></i>
-                    <input id="password_confirmation" type="password" name="password_confirmation"
-                        class="form-control" placeholder="Re-enter your password"
-                        required autocomplete="new-password"
-                        style="padding-right: 38px;">
-                    <i class="bi bi-eye toggle-pw" onclick="togglePw('password_confirmation', 'eye2');" id="eye2"></i>
-                </div>
-                @error('password_confirmation')
-                    <div class="invalid-feedback-custom"><i class="bi bi-x-circle"></i> {{ $message }}</div>
-                @enderror
-            </div>
-
-            <button type="submit" class="btn-register">
-                <i class="bi bi-person-check"></i>
-                Create Staff Account
-            </button>
-        </form>
-
-        <div class="login-link">
-            Already have an account? <a href="{{ route('login') }}">Sign in here</a>
+        <label class="form-label-custom">Full Name</label>
+        <div class="input-group-custom">
+            <i class="bi bi-person input-icon"></i>
+            <input
+                type="text"
+                name="name"
+                class="form-control-custom"
+                placeholder="Enter your full name"
+                value="{{ old('name') }}"
+                required autofocus
+            >
         </div>
-    </div>
 
-    <div class="login-footer">
-        © 2026 InquiSmart · NAN Cellphone Shop · All rights reserved
+        <label class="form-label-custom">Email Address</label>
+        <div class="input-group-custom">
+            <i class="bi bi-envelope input-icon"></i>
+            <input
+                type="email"
+                name="email"
+                class="form-control-custom"
+                placeholder="you@nancellphone.com"
+                value="{{ old('email') }}"
+                required
+            >
+        </div>
+
+        <label class="form-label-custom">Password</label>
+        <div class="input-group-custom" style="margin-bottom:4px;">
+            <i class="bi bi-lock input-icon"></i>
+            <input
+                type="password"
+                name="password"
+                id="passwordInput"
+                class="form-control-custom"
+                placeholder="Min. 8 characters"
+                required
+                style="padding-right:42px;"
+            >
+            <button type="button" class="password-toggle" onclick="togglePassword('passwordInput','eyeIcon1')">
+                <i class="bi bi-eye-slash" id="eyeIcon1"></i>
+            </button>
+        </div>
+        <div class="field-hint mb-3">At least 8 characters</div>
+
+        <label class="form-label-custom">Confirm Password</label>
+        <div class="input-group-custom">
+            <i class="bi bi-lock-fill input-icon"></i>
+            <input
+                type="password"
+                name="password_confirmation"
+                id="passwordConfirm"
+                class="form-control-custom"
+                placeholder="Re-enter your password"
+                required
+                style="padding-right:42px;"
+            >
+            <button type="button" class="password-toggle" onclick="togglePassword('passwordConfirm','eyeIcon2')">
+                <i class="bi bi-eye-slash" id="eyeIcon2"></i>
+            </button>
+        </div>
+
+        <button type="submit" class="btn-register">
+            <i class="bi bi-person-plus"></i>
+            Create Account
+        </button>
+    </form>
+
+    <div class="login-link">
+        Already have an account?
+        <a href="{{ route('login') }}">Sign in here</a>
     </div>
 </div>
 
 <script>
-function togglePw(inputId, iconId) {
+function togglePassword(inputId, iconId) {
     const input = document.getElementById(inputId);
     const icon  = document.getElementById(iconId);
     if (input.type === 'password') {
         input.type = 'text';
-        icon.className = 'bi bi-eye-slash toggle-pw';
+        icon.className = 'bi bi-eye';
     } else {
         input.type = 'password';
-        icon.className = 'bi bi-eye toggle-pw';
+        icon.className = 'bi bi-eye-slash';
     }
 }
-
-function checkStrength(val) {
-    const bars  = ['bar1','bar2','bar3','bar4'];
-    let score = 0;
-    if (val.length >= 8)               score++;
-    if (/[A-Z]/.test(val))             score++;
-    if (/[0-9]/.test(val))             score++;
-    if (/[^A-Za-z0-9]/.test(val))      score++;
-
-    const colors = ['', 'weak', 'weak', 'medium', 'strong'];
-    bars.forEach((id, i) => {
-        const el = document.getElementById(id);
-        el.className = 'strength-bar';
-        if (i < score) el.classList.add(colors[score]);
-    });
-}
 </script>
-
 </body>
 </html>
