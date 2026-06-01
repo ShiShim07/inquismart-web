@@ -11,12 +11,13 @@
 </head>
 <body class="bg-gray-50">
 
-<div class="flex h-screen overflow-hidden">
+<div style="display:flex; height:100vh; overflow:hidden;">
+
     <!-- Sidebar -->
-    <div class="w-72 bg-[#1e3a8a] text-white flex flex-col h-screen overflow-hidden">
+    <div style="width:288px; background:#1e3a8a; color:white; display:flex; flex-direction:column; height:100vh; overflow:hidden; flex-shrink:0;">
 
         <!-- Logo -->
-        <div class="p-6 border-b border-blue-800 flex-shrink-0">
+        <div style="padding:24px; border-bottom:1px solid #1e40af; flex-shrink:0;">
             <div class="flex items-center gap-3">
                 <img src="{{ asset('images/nan-logo.png') }}" alt="NAN Logo" class="w-12 h-12 rounded-full object-contain bg-white p-1">
                 <div>
@@ -27,7 +28,7 @@
         </div>
 
         <!-- Nav -->
-        <nav class="flex-1 p-4 space-y-1 overflow-y-auto min-h-0">
+        <nav style="flex:1; padding:16px; overflow-y:auto; min-height:0;">
 
             {{-- MAIN --}}
             <p class="text-xs text-blue-400 uppercase font-semibold px-4 pt-2 pb-1 tracking-wider">Main</p>
@@ -74,7 +75,7 @@
         </nav>
 
         <!-- Admin Info -->
-        <div class="p-4 border-t border-blue-800 flex-shrink-0">
+        <div style="padding:16px; border-top:1px solid #1e40af; flex-shrink:0;">
             <div class="flex items-center gap-3 px-4 py-3">
                 <div class="w-8 h-8 bg-white text-blue-800 rounded-full flex items-center justify-center font-bold flex-shrink-0">
                     N
@@ -93,16 +94,17 @@
     </div>
 
     <!-- Main Content -->
-    <div class="flex-1 flex flex-col overflow-hidden">
+    <div style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
         <header class="bg-white border-b px-8 py-5 flex items-center justify-between shadow-sm flex-shrink-0">
             <h2 class="text-2xl font-semibold text-gray-800">@yield('page_title', 'Dashboard')</h2>
             <div class="text-sm text-gray-500">{{ now()->format('F j, Y') }}</div>
         </header>
 
-        <main class="flex-1 overflow-auto p-8 bg-gray-50">
+        <main style="flex:1; overflow-y:auto; padding:32px; background:#f9fafb;">
             @yield('content')
         </main>
     </div>
+
 </div>
 
 </body>
