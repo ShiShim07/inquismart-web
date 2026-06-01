@@ -7,22 +7,33 @@ use App\Models\Ticket;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 
+/**
+ * Admin/TicketController — Updated for revised capstone
+ *
+ * Changes from original:
+ * - Sentiment ordering: Urgent/Frustrated → Negative/Neutral/Positive
+ * - Sentiment filter updated in index()
+ * - respond() and updateStatus() now also set resolved_at / processing_at
+ */
 class TicketController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Ticket::with('user')->orderByRaw("FIELD(sentiment, 'Urgent', 'Frustrated', 'Neutral')")
+        $query = Ticket::with('user')
+            // Negative first (highest priority), then Neutral, then Positive
+            ->orderByRaw("FIELD(sentiment, 'Negative', 'Neutral', 'Positive')")
             ->orderBy('created_at', 'desc');
 
-        if ($request->has('status') && $request->status != '') {
+        if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        if ($request->has('sentiment') && $request->sentiment != '') {
+        // Updated filter: Positive / Negative / Neutral
+        if ($request->filled('sentiment')) {
             $query->where('sentiment', $request->sentiment);
         }
 
-        if ($request->has('search') && $request->search != '') {
+        if ($request->filled('search')) {
             $query->where('subject', 'like', '%' . $request->search . '%');
         }
 
@@ -48,9 +59,9 @@ class TicketController extends Controller
             'status'         => 'Resolved',
             'staff_id'       => auth()->id(),
             'responded_at'   => now(),
+            'resolved_at'    => now(), // NEW: for analytics resolution time
         ]);
 
-        // ✅ Notify customer — ticket resolved with response
         Notification::create([
             'user_id'   => $ticket->user_id,
             'title'     => 'Ticket Resolved! ✅',
@@ -71,9 +82,18 @@ class TicketController extends Controller
         $oldStatus = $ticket->status;
         $newStatus = $request->status;
 
-        $ticket->update(['status' => $newStatus]);
+        $updateData = ['status' => $newStatus];
 
-        // ✅ Notify customer only if status actually changed
+        // Set timestamps for analytics (M15)
+        if ($newStatus === 'Processing' && !$ticket->processing_at) {
+            $updateData['processing_at'] = now();
+        }
+        if ($newStatus === 'Resolved' && !$ticket->resolved_at) {
+            $updateData['resolved_at'] = now();
+        }
+
+        $ticket->update($updateData);
+
         if ($oldStatus !== $newStatus) {
             if ($newStatus === 'Processing') {
                 Notification::create([
