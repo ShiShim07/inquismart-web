@@ -13,7 +13,7 @@
 
 <div class="flex h-screen overflow-hidden">
     <!-- Sidebar -->
-    <div class="w-72 bg-[#1e3a8a] text-white flex flex-col">
+    <div class="w-72 bg-[#1e3a8a] text-white flex flex-col h-screen overflow-hidden">
 
         <!-- Logo -->
         <div class="p-6 border-b border-blue-800 flex-shrink-0">
@@ -82,6 +82,7 @@
                 <div class="flex-1 text-sm min-w-0">
                     <p class="font-medium truncate">NAN Admin</p>
                     <p class="text-blue-300 text-xs truncate">admin@nancellphone.com</p>
+                    <p class="text-blue-400 text-xs uppercase tracking-wider">Admin</p>
                 </div>
             </div>
             <a href="{{ route('logout') }}" class="btn btn-error btn-sm w-full mt-2">
