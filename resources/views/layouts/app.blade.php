@@ -37,15 +37,14 @@
                 <i class="fas fa-exclamation-triangle"></i>
                 <span class="font-medium">Negative Tickets</span>
             </a>
-            <!-- FAQ Management -->
             <a href="{{ route('admin.faq.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-700 transition-colors">
                 <i class="fas fa-question-circle"></i>
                 <span class="font-medium">FAQ Management</span>
             </a>
         </nav>
 
-        <!-- Bottom Admin Section with added space -->
-        <div class="p-4 border-t border-blue-800 mt-8">   <!-- ← Increased spacing here -->
+        <!-- Bottom Admin Section - More aggressive spacing -->
+        <div class="p-4 border-t border-blue-800 mt-12">   <!-- ← mt-12 for more space -->
             <div class="flex items-center gap-3 px-4 py-3">
                 <div class="w-8 h-8 bg-white text-blue-800 rounded-full flex items-center justify-center font-bold">
                     N
