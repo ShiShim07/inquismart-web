@@ -18,7 +18,7 @@
             <div class="flex items-center gap-3">
                 <img src="{{ asset('images/nan-logo.png') }}" alt="NAN Logo" class="w-12 h-12 rounded-full object-contain bg-white p-1">
                 <div>
-                    <h1 class="text-2xl font-bold tracking-tight">InquiSmart</h1>
+                    <h1 class="text-2xl font-bold tracking-tight">InquiBot</h1>
                     <p class="text-xs text-blue-300">NaN Cellphone Shop</p>
                 </div>
             </div>
