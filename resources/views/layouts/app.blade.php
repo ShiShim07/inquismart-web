@@ -11,10 +11,13 @@
 </head>
 <body class="bg-gray-50">
 
-<div class="flex h-screen overflow-hidden">
+<div style="display:flex; height:100vh; overflow:hidden;">
+
     <!-- Sidebar -->
-    <div class="w-72 bg-[#1e3a8a] text-white flex flex-col">
-        <div class="p-6 border-b border-blue-800">
+    <div style="width:288px; background:#1e3a8a; color:white; display:flex; flex-direction:column; height:100vh; overflow:hidden; flex-shrink:0;">
+
+        <!-- Logo -->
+        <div style="padding:20px 24px; border-bottom:1px solid #1e40af; flex-shrink:0;">
             <div class="flex items-center gap-3">
                 <img src="{{ asset('images/nan-logo.png') }}" alt="NAN Logo" class="w-12 h-12 rounded-full object-contain bg-white p-1">
                 <div>
@@ -24,43 +27,84 @@
             </div>
         </div>
 
-        <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
-            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-700 text-white">
-                <i class="fas fa-tachometer-alt"></i>
-                <span class="font-medium">Dashboard</span>
+        <!-- Nav -->
+        <nav style="flex:1; padding:8px 12px; overflow-y:auto; min-height:0;">
+
+            {{-- MAIN --}}
+            <p class="text-xs text-blue-400 uppercase font-semibold px-4 pt-2 pb-1 tracking-wider">Main</p>
+            <a href="{{ route('admin.dashboard') }}"
+               class="flex items-center gap-3 px-4 py-2 rounded-xl transition-colors {{ request()->routeIs('admin.dashboard') ? 'bg-blue-700' : 'hover:bg-blue-700' }}">
+                <i class="fas fa-tachometer-alt w-4"></i>
+                <span class="font-medium text-sm">Dashboard</span>
             </a>
-            <a href="{{ route('admin.tickets.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-blue-700 transition-colors">
-                <i class="fas fa-ticket-alt"></i>
-                <span class="font-medium">All Tickets</span>
+
+            {{-- TICKETS --}}
+            <p class="text-xs text-blue-400 uppercase font-semibold px-4 pt-2 pb-1 tracking-wider">Tickets</p>
+            <a href="{{ route('admin.tickets.index') }}"
+               class="flex items-center gap-3 px-4 py-2 rounded-xl transition-colors {{ request()->routeIs('admin.tickets.index') ? 'bg-blue-700' : 'hover:bg-blue-700' }}">
+                <i class="fas fa-ticket-alt w-4"></i>
+                <span class="font-medium text-sm">All Tickets</span>
             </a>
-            <!-- Add more menu items here -->
+            <a href="{{ route('admin.tickets.negative') }}"
+               class="flex items-center gap-3 px-4 py-2 rounded-xl transition-colors {{ request()->routeIs('admin.tickets.negative') ? 'bg-blue-700' : 'hover:bg-blue-700' }}">
+                <i class="fas fa-exclamation-triangle w-4"></i>
+                <span class="font-medium text-sm">Negative Tickets</span>
+            </a>
+
+            {{-- AI & ANALYTICS --}}
+            <p class="text-xs text-blue-400 uppercase font-semibold px-4 pt-2 pb-1 tracking-wider">AI & Analytics</p>
+            <a href="{{ route('admin.chatbot-logs') }}"
+               class="flex items-center gap-3 px-4 py-2 rounded-xl transition-colors {{ request()->routeIs('admin.chatbot-logs') ? 'bg-blue-700' : 'hover:bg-blue-700' }}">
+                <i class="fas fa-robot w-4"></i>
+                <span class="font-medium text-sm">Chatbot Logs</span>
+            </a>
+            <a href="{{ route('admin.analytics') }}"
+               class="flex items-center gap-3 px-4 py-2 rounded-xl transition-colors {{ request()->routeIs('admin.analytics') ? 'bg-blue-700' : 'hover:bg-blue-700' }}">
+                <i class="fas fa-chart-bar w-4"></i>
+                <span class="font-medium text-sm">Service Analytics</span>
+            </a>
+
+            {{-- MANAGEMENT --}}
+            <p class="text-xs text-blue-400 uppercase font-semibold px-4 pt-2 pb-1 tracking-wider">Management</p>
+            <a href="{{ route('admin.faqs.index') }}"
+               class="flex items-center gap-3 px-4 py-2 rounded-xl transition-colors {{ request()->routeIs('admin.faqs.*') ? 'bg-blue-700' : 'hover:bg-blue-700' }}">
+                <i class="fas fa-question-circle w-4"></i>
+                <span class="font-medium text-sm">FAQ Management</span>
+            </a>
+
         </nav>
 
-        <div class="p-4 border-t border-blue-800">
-            <div class="flex items-center gap-3 px-4 py-3">
-                <div class="w-8 h-8 bg-white text-blue-800 rounded-full flex items-center justify-center font-bold">
+        <!-- Admin Info -->
+        <div style="padding:12px 16px; border-top:1px solid #1e40af; flex-shrink:0;">
+            <div class="flex items-center gap-3 px-2 py-2">
+                <div class="w-8 h-8 bg-white text-blue-800 rounded-full flex items-center justify-center font-bold flex-shrink-0">
                     N
                 </div>
-                <div class="flex-1 text-sm">
-                    <p class="font-medium">NAN Admin</p>
-                    <p class="text-blue-300 text-xs">admin@nancellphone.com</p>
+                <div class="flex-1 text-sm min-w-0">
+                    <p class="font-medium truncate">NAN Admin</p>
+                    <p class="text-blue-300 text-xs truncate">admin@nancellphone.com</p>
+                    <p class="text-blue-400 text-xs uppercase tracking-wider">Admin</p>
                 </div>
             </div>
-            <a href="{{ route('logout') }}" class="btn btn-error btn-sm w-full mt-2">Logout</a>
+            <a href="{{ route('logout') }}" class="btn btn-error btn-sm w-full mt-1">
+                <i class="fas fa-sign-out-alt mr-1"></i> Logout
+            </a>
         </div>
+
     </div>
 
     <!-- Main Content -->
-    <div class="flex-1 flex flex-col overflow-hidden">
-        <header class="bg-white border-b px-8 py-5 flex items-center justify-between shadow-sm">
+    <div style="flex:1; display:flex; flex-direction:column; overflow:hidden;">
+        <header class="bg-white border-b px-8 py-5 flex items-center justify-between shadow-sm" style="flex-shrink:0;">
             <h2 class="text-2xl font-semibold text-gray-800">@yield('page_title', 'Dashboard')</h2>
             <div class="text-sm text-gray-500">{{ now()->format('F j, Y') }}</div>
         </header>
 
-        <main class="flex-1 overflow-auto p-8 bg-gray-50">
+        <main style="flex:1; overflow-y:auto; padding:32px; background:#f9fafb;">
             @yield('content')
         </main>
     </div>
+
 </div>
 
 </body>
