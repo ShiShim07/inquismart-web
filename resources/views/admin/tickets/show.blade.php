@@ -1,120 +1,143 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Ticket Detail — InquiSmart Admin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
+@extends('admin.layout')
+@section('title', 'Ticket Detail')
 
-<div class="max-w-4xl mx-auto py-10 px-4">
+@section('content')
 
-    {{-- Back Button --}}
-    <a href="{{ route('admin.tickets.index') }}"
-       class="inline-flex items-center text-blue-600 hover:underline mb-6">
-        ← Back to All Tickets
+{{-- Back + Header --}}
+<div class="d-flex align-items-center gap-3 mb-4 fade-up">
+    <a href="{{ route('admin.tickets.index') }}" class="btn-ghost" style="padding:7px 12px;">
+        <i class="bi bi-arrow-left me-1"></i> Back
     </a>
-
-    {{-- Success Message --}}
-    @if(session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    {{-- Ticket Info --}}
-    <div class="bg-white rounded-2xl shadow p-6 mb-6">
-        <div class="flex justify-between items-start">
-            <div>
-                <p class="text-sm text-gray-400">#TKT-{{ str_pad($ticket->id, 3, '0', STR_PAD_LEFT) }}</p>
-                <h1 class="text-2xl font-bold text-gray-800 mt-1">{{ $ticket->subject }}</h1>
-                <p class="text-sm text-gray-400 mt-1">{{ $ticket->created_at->format('M d, Y h:i A') }}</p>
-            </div>
-            <div class="flex flex-col items-end gap-2">
-                @php
-                    $statusColor = match($ticket->status) {
-                        'Resolved'   => 'bg-green-100 text-green-700',
-                        'Processing' => 'bg-yellow-100 text-yellow-700',
-                        default      => 'bg-blue-100 text-blue-700',
-                    };
-                    $sentimentColor = match($ticket->sentiment) {
-                        'Urgent'     => 'bg-red-100 text-red-700',
-                        'Frustrated' => 'bg-orange-100 text-orange-700',
-                        default      => 'bg-gray-100 text-gray-600',
-                    };
-                @endphp
-                <span class="px-3 py-1 rounded-full text-sm font-semibold {{ $statusColor }}">
-                    {{ $ticket->status }}
-                </span>
-                <span class="px-3 py-1 rounded-full text-sm font-semibold {{ $sentimentColor }}">
-                    🧠 {{ $ticket->sentiment }}
-                </span>
-            </div>
-        </div>
+    <div>
+        <span style="font-size:11.5px;font-weight:700;color:var(--text-3);">
+            #TKT-{{ str_pad($ticket->id, 3, '0', STR_PAD_LEFT) }}
+        </span>
+        <h1 style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text-1);margin:2px 0 0;">
+            {{ $ticket->subject }}
+        </h1>
     </div>
-
-    {{-- Customer Info --}}
-    <div class="bg-white rounded-2xl shadow p-6 mb-6">
-        <h2 class="text-sm font-bold text-gray-500 uppercase mb-3">Customer</h2>
-        <p class="text-gray-800 font-semibold">{{ $ticket->user->name ?? 'Unknown' }}</p>
-        <p class="text-gray-500 text-sm">{{ $ticket->user->email ?? '' }}</p>
-    </div>
-
-    {{-- Customer Message --}}
-    <div class="bg-white rounded-2xl shadow p-6 mb-6">
-        <h2 class="text-sm font-bold text-gray-500 uppercase mb-3">Customer Message</h2>
-        <div class="bg-gray-50 rounded-xl p-4 text-gray-700 leading-relaxed">
-            {{ $ticket->description }}
-        </div>
-    </div>
-
-    {{-- Staff Response --}}
-    <div class="bg-white rounded-2xl shadow p-6 mb-6">
-        <h2 class="text-sm font-bold text-gray-500 uppercase mb-3">Staff Response</h2>
-
-        @if($ticket->staff_response)
-            <div class="bg-green-50 rounded-xl p-4 text-gray-700 leading-relaxed mb-4">
-                {{ $ticket->staff_response }}
-            </div>
-        @else
-            <div class="bg-yellow-50 rounded-xl p-4 text-yellow-700 mb-4">
-                ⏳ No response yet.
-            </div>
-        @endif
-
-        {{-- ✅ Response Form — standalone, hindi nested --}}
-        <form action="{{ route('admin.tickets.respond', $ticket) }}" method="POST">
-            @csrf
-            <textarea
-                name="staff_response"
-                rows="4"
-                placeholder="Type your response here..."
-                class="w-full border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:border-blue-400"
-            >{{ old('staff_response', $ticket->staff_response) }}</textarea>
-
-            @error('staff_response')
-                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-            @enderror
-
-            <button type="submit"
-                class="mt-3 bg-blue-600 text-white px-6 py-2 rounded-xl text-sm font-semibold hover:bg-blue-700">
-                Send Response & Resolve
-            </button>
-        </form>
-
-        {{-- ✅ Status Form — SEPARATE, hindi na nested sa loob ng respond form --}}
-        <form action="{{ route('admin.tickets.status', $ticket) }}" method="POST" class="mt-3">
-            @csrf
-            @method('PATCH')
-            <label class="text-sm text-gray-500 mr-2">Update Status:</label>
-            <select name="status" onchange="this.form.submit()"
-                class="border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-600 focus:outline-none">
-                <option value="Pending"    {{ $ticket->status == 'Pending'    ? 'selected' : '' }}>Pending</option>
-                <option value="Processing" {{ $ticket->status == 'Processing' ? 'selected' : '' }}>Processing</option>
-                <option value="Resolved"   {{ $ticket->status == 'Resolved'   ? 'selected' : '' }}>Resolved</option>
-            </select>
-        </form>
-    </div>
-
 </div>
-</body>
-</html>
+
+<div class="row g-4">
+    {{-- Left column --}}
+    <div class="col-md-8">
+
+        {{-- Customer Message --}}
+        <div class="surface surface-pad mb-4 fade-up delay-1">
+            <h6 class="section-title mb-3"><i class="bi bi-chat-left-text-fill"></i> Customer Message</h6>
+            <div style="background:var(--bg);border-radius:12px;padding:16px;font-size:14px;line-height:1.7;color:var(--text-1);">
+                {{ $ticket->description }}
+            </div>
+            <div style="font-size:11.5px;color:var(--text-3);margin-top:10px;">
+                <i class="bi bi-clock me-1"></i>{{ $ticket->created_at->format('M d, Y h:i A') }}
+            </div>
+        </div>
+
+        {{-- Staff Response --}}
+        <div class="surface surface-pad mb-4 fade-up delay-2">
+            <h6 class="section-title mb-3"><i class="bi bi-reply-fill"></i> Staff Response</h6>
+
+            @if($ticket->staff_response)
+                <div style="background:#EDFFF9;border-radius:12px;padding:16px;font-size:14px;line-height:1.7;color:var(--text-1);border-left:3px solid var(--success);margin-bottom:16px;">
+                    {{ $ticket->staff_response }}
+                </div>
+            @else
+                <div style="background:#FFF8EE;border-radius:12px;padding:14px 16px;font-size:13.5px;color:#9A5A0A;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
+                    <i class="bi bi-hourglass-split"></i> No response yet.
+                </div>
+            @endif
+
+            <form action="{{ route('admin.tickets.respond', $ticket) }}" method="POST">
+                @csrf
+                <label class="form-label-sm">Write your response</label>
+                <textarea name="staff_response" rows="5"
+                    placeholder="Type your response here..."
+                    class="form-ctrl"
+                    style="resize:vertical;">{{ old('staff_response', $ticket->staff_response) }}</textarea>
+                @error('staff_response')
+                    <div style="color:var(--danger);font-size:12px;margin-top:4px;">{{ $message }}</div>
+                @enderror
+                <div class="mt-3">
+                    <button type="submit" class="btn-primary-custom">
+                        <i class="bi bi-send-fill"></i> Send Response & Resolve
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        {{-- Status Update --}}
+        <div class="surface surface-pad fade-up delay-3">
+            <h6 class="section-title mb-3"><i class="bi bi-arrow-repeat"></i> Update Status</h6>
+            <form action="{{ route('admin.tickets.status', $ticket) }}" method="POST" class="d-flex align-items-center gap-3">
+                @csrf
+                @method('PATCH')
+                <label class="form-label-sm mb-0" style="white-space:nowrap;">Change status to:</label>
+                <select name="status" class="form-ctrl" style="max-width:180px;" onchange="this.form.submit()">
+                    <option value="Pending"    {{ $ticket->status == 'Pending'    ? 'selected' : '' }}>Pending</option>
+                    <option value="Processing" {{ $ticket->status == 'Processing' ? 'selected' : '' }}>Processing</option>
+                    <option value="Resolved"   {{ $ticket->status == 'Resolved'   ? 'selected' : '' }}>Resolved</option>
+                </select>
+                <span class="chip chip-{{ strtolower($ticket->status) }}">Current: {{ $ticket->status }}</span>
+            </form>
+        </div>
+
+    </div>
+
+    {{-- Right column --}}
+    <div class="col-md-4">
+
+        {{-- Ticket Meta --}}
+        <div class="surface surface-pad mb-4 fade-up delay-1">
+            <h6 class="section-title mb-3"><i class="bi bi-info-circle-fill"></i> Ticket Info</h6>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+                <div>
+                    <div class="form-label-sm">Status</div>
+                    <span class="chip chip-{{ strtolower($ticket->status) }}">{{ $ticket->status }}</span>
+                </div>
+                <div>
+                    <div class="form-label-sm">AI Sentiment</div>
+                    @php
+                        $sentKey = strtolower($ticket->sentiment);
+                        $dotColor = match($sentKey) {
+                            'negative','urgent' => 'var(--danger)',
+                            'positive' => 'var(--success)',
+                            'frustrated' => 'var(--warning)',
+                            default => '#5B72F8',
+                        };
+                    @endphp
+                    <span class="chip chip-{{ $sentKey }}">
+                        <span style="width:6px;height:6px;border-radius:50%;background:{{ $dotColor }};display:inline-block;"></span>
+                        {{ $ticket->sentiment }}
+                    </span>
+                </div>
+                <div>
+                    <div class="form-label-sm">Ticket ID</div>
+                    <span style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--text-2);">
+                        #TKT-{{ str_pad($ticket->id, 3, '0', STR_PAD_LEFT) }}
+                    </span>
+                </div>
+                <div>
+                    <div class="form-label-sm">Submitted</div>
+                    <span style="font-size:13px;color:var(--text-2);">{{ $ticket->created_at->format('M d, Y h:i A') }}</span>
+                </div>
+            </div>
+        </div>
+
+        {{-- Customer --}}
+        <div class="surface surface-pad fade-up delay-2">
+            <h6 class="section-title mb-3"><i class="bi bi-person-fill"></i> Customer</h6>
+            <div class="d-flex align-items-center gap-3">
+                <div style="width:42px;height:42px;border-radius:12px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:var(--primary);flex-shrink:0;">
+                    {{ strtoupper(substr($ticket->user->name ?? 'U', 0, 1)) }}
+                </div>
+                <div>
+                    <div style="font-weight:600;font-size:14px;">{{ $ticket->user->name ?? 'Unknown' }}</div>
+                    <div style="font-size:12px;color:var(--text-3);">{{ $ticket->user->email ?? '' }}</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@endsection

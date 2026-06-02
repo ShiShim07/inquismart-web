@@ -7,43 +7,43 @@
 
 @section('content')
 
-{{-- Summary Cards Row --}}
+{{-- Summary Cards --}}
 <div class="row g-3 mb-4">
     <div class="col-md-4">
-        <div class="stat-card">
+        <div class="stat-card fade-up delay-1">
             <div class="d-flex align-items-center gap-3">
-                <div class="stat-icon" style="background:#FEF2F2;flex-shrink:0;">
-                    <i class="bi bi-emoji-frown" style="color:#DC2626;"></i>
+                <div class="stat-icon" style="background:#FFF0F2;flex-shrink:0;">
+                    <i class="bi bi-emoji-frown-fill" style="color:var(--danger);"></i>
                 </div>
                 <div>
                     <div class="stat-label">Negative Tickets</div>
-                    <div class="stat-value" style="color:#991B1B;font-size:26px;">{{ $sentimentData['Negative'] ?? 0 }}</div>
+                    <div class="stat-value" style="color:var(--danger);font-size:26px;">{{ $sentimentData['Negative'] ?? 0 }}</div>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="stat-card">
+        <div class="stat-card fade-up delay-2">
             <div class="d-flex align-items-center gap-3">
-                <div class="stat-icon" style="background:#F0FDF4;flex-shrink:0;">
-                    <i class="bi bi-emoji-smile" style="color:#22C55E;"></i>
+                <div class="stat-icon" style="background:#EDFFF9;flex-shrink:0;">
+                    <i class="bi bi-emoji-smile-fill" style="color:var(--success);"></i>
                 </div>
                 <div>
                     <div class="stat-label">Positive Tickets</div>
-                    <div class="stat-value" style="color:#166534;font-size:26px;">{{ $sentimentData['Positive'] ?? 0 }}</div>
+                    <div class="stat-value" style="color:var(--success);font-size:26px;">{{ $sentimentData['Positive'] ?? 0 }}</div>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-md-4">
-        <div class="stat-card">
+        <div class="stat-card fade-up delay-3">
             <div class="d-flex align-items-center gap-3">
-                <div class="stat-icon" style="background:#EFF6FF;flex-shrink:0;">
-                    <i class="bi bi-emoji-neutral" style="color:#3B82F6;"></i>
+                <div class="stat-icon" style="background:#EEF2FF;flex-shrink:0;">
+                    <i class="bi bi-emoji-neutral-fill" style="color:var(--primary);"></i>
                 </div>
                 <div>
                     <div class="stat-label">Neutral Tickets</div>
-                    <div class="stat-value" style="color:#1E40AF;font-size:26px;">{{ $sentimentData['Neutral'] ?? 0 }}</div>
+                    <div class="stat-value" style="color:var(--primary);font-size:26px;">{{ $sentimentData['Neutral'] ?? 0 }}</div>
                 </div>
             </div>
         </div>
@@ -52,23 +52,29 @@
 
 {{-- Satisfaction Rate --}}
 @if(isset($satisfactionRate))
-<div class="card-surface mb-4">
-    <div class="d-flex align-items-center justify-content-between">
+<div class="surface surface-pad mb-4 fade-up">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
         <div>
-            <h6 class="section-header"><i class="bi bi-star"></i> Customer Satisfaction Rate</h6>
-            <p style="font-size:13px;color:var(--text-muted);margin:4px 0 0;">Based on Positive vs Negative sentiment ratio</p>
+            <h6 class="section-title"><i class="bi bi-star-fill"></i> Customer Satisfaction Rate</h6>
+            <p style="font-size:13px;color:var(--text-2);margin:5px 0 0;">Based on Positive vs Negative sentiment ratio</p>
         </div>
         <div style="text-align:right;">
-            <div style="font-size:36px;font-weight:700;color:{{ $satisfactionRate >= 70 ? '#166534' : ($satisfactionRate >= 40 ? '#92400E' : '#991B1B') }};">
+            @php
+                $rateColor = $satisfactionRate >= 70 ? 'var(--success)' : ($satisfactionRate >= 40 ? 'var(--warning)' : 'var(--danger)');
+                $rateLabel = $satisfactionRate >= 70 ? 'Good' : ($satisfactionRate >= 40 ? 'Average' : 'Needs improvement');
+                $rateEmoji = $satisfactionRate >= 70 ? 'bi-emoji-smile-fill' : ($satisfactionRate >= 40 ? 'bi-emoji-neutral-fill' : 'bi-emoji-frown-fill');
+            @endphp
+            <div style="font-family:'Syne',sans-serif;font-size:42px;font-weight:800;color:{{ $rateColor }};line-height:1;">
                 {{ $satisfactionRate }}%
             </div>
-            <div style="font-size:12px;color:var(--text-muted);">
-                @if($satisfactionRate >= 70) 😊 Good
-                @elseif($satisfactionRate >= 40) 😐 Average
-                @else 😟 Needs improvement
-                @endif
+            <div style="font-size:12.5px;color:var(--text-2);margin-top:4px;">
+                <i class="bi {{ $rateEmoji }}" style="color:{{ $rateColor }};"></i> {{ $rateLabel }}
             </div>
         </div>
+    </div>
+    {{-- Progress bar --}}
+    <div style="background:var(--bg);border-radius:99px;height:8px;margin-top:16px;overflow:hidden;">
+        <div style="width:{{ $satisfactionRate }}%;background:{{ $rateColor }};height:100%;border-radius:99px;transition:width 0.6s ease;"></div>
     </div>
 </div>
 @endif
@@ -76,47 +82,40 @@
 {{-- Charts Row --}}
 <div class="row g-4 mb-4">
     <div class="col-md-5">
-        <div class="card-surface h-100">
-            <h6 class="section-header mb-4">
-                <i class="bi bi-pie-chart"></i> Sentiment Distribution
-            </h6>
-            <div style="position:relative;max-width:280px;margin:0 auto;">
+        <div class="surface surface-pad h-100 fade-up delay-1">
+            <h6 class="section-title mb-4"><i class="bi bi-pie-chart-fill"></i> Sentiment Distribution</h6>
+            <div style="position:relative;max-width:260px;margin:0 auto;">
                 <canvas id="sentimentChart" height="240"></canvas>
             </div>
         </div>
     </div>
-
     <div class="col-md-7">
-        <div class="card-surface h-100">
-            <h6 class="section-header mb-4">
-                <i class="bi bi-bar-chart"></i> Ticket Status Overview
-            </h6>
+        <div class="surface surface-pad h-100 fade-up delay-2">
+            <h6 class="section-title mb-4"><i class="bi bi-bar-chart-fill"></i> Ticket Status Overview</h6>
             <canvas id="statusChart" height="200"></canvas>
         </div>
     </div>
 </div>
 
 {{-- Monthly Chart --}}
-<div class="card-surface mb-4">
-    <h6 class="section-header mb-4">
-        <i class="bi bi-graph-up"></i> Monthly Ticket Volume — {{ date('Y') }}
-    </h6>
+<div class="surface surface-pad mb-4 fade-up delay-3">
+    <h6 class="section-title mb-4"><i class="bi bi-graph-up-arrow"></i> Monthly Ticket Volume — {{ date('Y') }}</h6>
     <canvas id="monthlyChart" height="90"></canvas>
 </div>
 
-{{-- Top Inquiry Categories (M14 Predictive Insight) --}}
+{{-- Top Categories --}}
 @if(isset($topCategories) && count($topCategories))
-<div class="card-surface mb-4">
-    <h6 class="section-header mb-4">
-        <i class="bi bi-lightbulb"></i> Top Inquiry Categories
-        <span style="font-size:11px;color:var(--text-muted);font-weight:400;margin-left:8px;">Predictive Inquiry Insight</span>
-    </h6>
+<div class="surface surface-pad fade-up delay-4">
+    <div class="d-flex align-items-center gap-2 mb-4">
+        <h6 class="section-title"><i class="bi bi-lightbulb-fill"></i> Top Inquiry Categories</h6>
+        <span style="font-size:11px;color:var(--text-3);background:var(--bg);padding:3px 9px;border-radius:6px;font-weight:600;">Predictive Insight</span>
+    </div>
     <div class="row g-3">
         @foreach(array_slice($topCategories, 0, 6, true) as $category => $count)
         <div class="col-md-4">
-            <div style="background:#F8FAFC;border-radius:10px;padding:14px 16px;border:1px solid #E5E7EB;display:flex;justify-content:space-between;align-items:center;">
-                <span style="font-size:13px;font-weight:600;color:#1A1A2E;">{{ $category }}</span>
-                <span style="background:#EFF6FF;color:#1E40AF;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;">{{ $count }}</span>
+            <div style="background:var(--bg);border-radius:var(--radius-md);padding:14px 16px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:13.5px;font-weight:600;color:var(--text-1);">{{ $category }}</span>
+                <span class="chip chip-neutral">{{ $count }}</span>
             </div>
         </div>
         @endforeach
@@ -131,10 +130,9 @@ const monthlyData = @json($monthlyTickets);
 const monthlyLabels = monthlyData.map(d => months[d.month - 1]);
 const monthlyCounts = monthlyData.map(d => d.count);
 
-Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
-Chart.defaults.color = '#64748B';
+Chart.defaults.font.family = "'DM Sans', system-ui, sans-serif";
+Chart.defaults.color = '#5A6485';
 
-// Sentiment Chart — Updated: Negative/Positive/Neutral
 new Chart(document.getElementById('sentimentChart'), {
     type: 'doughnut',
     data: {
@@ -145,23 +143,22 @@ new Chart(document.getElementById('sentimentChart'), {
                 {{ $sentimentData['Positive'] ?? 0 }},
                 {{ $sentimentData['Neutral'] ?? 0 }}
             ],
-            backgroundColor: ['#EF4444', '#22C55E', '#3B82F6'],
+            backgroundColor: ['#FF3B5C', '#00C896', '#5B72F8'],
             borderWidth: 0,
-            hoverOffset: 4,
+            hoverOffset: 6,
         }]
     },
     options: {
         plugins: {
             legend: {
                 position: 'bottom',
-                labels: { padding: 16, font: { size: 13 }, boxWidth: 12, boxHeight: 12 }
+                labels: { padding: 18, font: { size: 13 }, boxWidth: 10, boxHeight: 10 }
             }
         },
-        cutout: '68%',
+        cutout: '70%',
     }
 });
 
-// Status Chart
 new Chart(document.getElementById('statusChart'), {
     type: 'bar',
     data: {
@@ -173,10 +170,10 @@ new Chart(document.getElementById('statusChart'), {
                 {{ $statusData['Processing'] ?? 0 }},
                 {{ $statusData['Resolved'] ?? 0 }}
             ],
-            backgroundColor: ['rgba(59,130,246,0.15)', 'rgba(245,158,11,0.15)', 'rgba(34,197,94,0.15)'],
-            borderColor: ['#3B82F6', '#F59E0B', '#22C55E'],
-            borderWidth: 1.5,
-            borderRadius: 8,
+            backgroundColor: ['rgba(91,114,248,0.12)', 'rgba(255,181,71,0.15)', 'rgba(0,200,150,0.12)'],
+            borderColor: ['#5B72F8', '#FFB547', '#00C896'],
+            borderWidth: 2,
+            borderRadius: 10,
             borderSkipped: false,
         }]
     },
@@ -198,7 +195,6 @@ new Chart(document.getElementById('statusChart'), {
     }
 });
 
-// Monthly Volume Chart
 new Chart(document.getElementById('monthlyChart'), {
     type: 'line',
     data: {
@@ -206,15 +202,15 @@ new Chart(document.getElementById('monthlyChart'), {
         datasets: [{
             label: 'Tickets',
             data: monthlyCounts.length ? monthlyCounts : new Array(12).fill(0),
-            borderColor: '#3B82F6',
-            backgroundColor: 'rgba(59,130,246,0.06)',
+            borderColor: '#1A3FC4',
+            backgroundColor: 'rgba(26,63,196,0.06)',
             fill: true,
-            tension: 0.4,
-            pointBackgroundColor: '#3B82F6',
+            tension: 0.45,
+            pointBackgroundColor: '#1A3FC4',
             pointBorderColor: '#fff',
-            pointBorderWidth: 2,
-            pointRadius: 4,
-            pointHoverRadius: 6,
+            pointBorderWidth: 2.5,
+            pointRadius: 5,
+            pointHoverRadius: 7,
         }]
     },
     options: {

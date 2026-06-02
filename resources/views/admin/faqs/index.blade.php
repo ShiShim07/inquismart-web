@@ -1,144 +1,127 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>FAQ Management — InquiSmart Admin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
+@extends('admin.layout')
+@section('title', 'FAQ Management')
 
-<div class="max-w-4xl mx-auto py-10 px-4">
+@section('content')
 
-    {{-- Header --}}
-    <div class="flex justify-between items-center mb-6">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-800">FAQ Management</h1>
-            <p class="text-sm text-gray-400 mt-1">Add, edit, or remove frequently asked questions</p>
+<div class="row g-4">
+    {{-- Left: Add New FAQ --}}
+    <div class="col-md-4">
+        <div class="surface surface-pad fade-up">
+            <h6 class="section-title mb-4"><i class="bi bi-plus-circle-fill"></i> Add New FAQ</h6>
+            <form action="{{ route('admin.faqs.store') }}" method="POST">
+                @csrf
+                <div class="mb-3">
+                    <label class="form-label-sm">Question</label>
+                    <input type="text" name="question" value="{{ old('question') }}"
+                           placeholder="e.g. What is your return policy?"
+                           class="form-ctrl">
+                    @error('question')
+                        <div style="color:var(--danger);font-size:12px;margin-top:4px;">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="mb-4">
+                    <label class="form-label-sm">Answer</label>
+                    <textarea name="answer" rows="5"
+                              placeholder="Type the answer here..."
+                              class="form-ctrl" style="resize:vertical;">{{ old('answer') }}</textarea>
+                    @error('answer')
+                        <div style="color:var(--danger);font-size:12px;margin-top:4px;">{{ $message }}</div>
+                    @enderror
+                </div>
+                <button type="submit" class="btn-primary-custom w-100" style="justify-content:center;">
+                    <i class="bi bi-plus-lg"></i> Add FAQ
+                </button>
+            </form>
         </div>
-        <a href="{{ route('admin.dashboard') }}"
-           class="text-blue-600 hover:underline text-sm">← Back to Dashboard</a>
     </div>
 
-    {{-- Success Message --}}
-    @if(session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl mb-4">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    {{-- Add New FAQ Form --}}
-    <div class="bg-white rounded-2xl shadow p-6 mb-6">
-        <h2 class="text-sm font-bold text-gray-500 uppercase mb-4">Add New FAQ</h2>
-        <form action="{{ route('admin.faqs.store') }}" method="POST">
-            @csrf
-            <div class="mb-3">
-                <label class="text-xs text-gray-500 block mb-1">Question</label>
-                <input type="text" name="question" value="{{ old('question') }}"
-                       placeholder="e.g. What is your return policy?"
-                       class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400">
-                @error('question')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
+    {{-- Right: FAQ List --}}
+    <div class="col-md-8">
+        <div class="surface fade-up delay-1">
+            <div class="surface-pad" style="border-bottom:1px solid var(--border);padding-bottom:16px;">
+                <div class="d-flex align-items-center justify-content-between">
+                    <h6 class="section-title"><i class="bi bi-question-circle-fill"></i> All FAQs</h6>
+                    <span class="chip chip-neutral">{{ $faqs->total() }} total</span>
+                </div>
             </div>
-            <div class="mb-4">
-                <label class="text-xs text-gray-500 block mb-1">Answer</label>
-                <textarea name="answer" rows="3"
-                          placeholder="Type the answer here..."
-                          class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400">{{ old('answer') }}</textarea>
-                @error('answer')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-            <button type="submit"
-                class="bg-blue-600 text-white px-6 py-2 rounded-xl text-sm font-semibold hover:bg-blue-700">
-                + Add FAQ
-            </button>
-        </form>
-    </div>
 
-    {{-- FAQ List --}}
-    <div class="bg-white rounded-2xl shadow overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100">
-            <h2 class="text-sm font-bold text-gray-500 uppercase">
-                All FAQs
-                <span class="ml-2 bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-semibold">
-                    {{ $faqs->total() }}
-                </span>
-            </h2>
-        </div>
+            @forelse($faqs as $faq)
+                <div style="padding:18px 24px;border-bottom:1px solid var(--border);transition:background 0.14s;" onmouseover="this.style.background='#F7F9FF'" onmouseout="this.style.background='transparent'">
 
-        @forelse($faqs as $faq)
-            <div class="px-6 py-4 border-b border-gray-50 hover:bg-gray-50 transition">
-
-                {{-- View Mode --}}
-                <div id="view-{{ $faq->id }}">
-                    <p class="font-semibold text-gray-800 text-sm">{{ $faq->question }}</p>
-                    <p class="text-gray-500 text-sm mt-1 leading-relaxed">{{ $faq->answer }}</p>
-                    <div class="flex gap-3 mt-3">
-                        <button onclick="toggleEdit({{ $faq->id }})"
-                            class="text-xs text-blue-600 hover:underline font-semibold">
-                            ✏️ Edit
-                        </button>
-                        <form action="{{ route('admin.faqs.destroy', $faq) }}" method="POST"
-                              onsubmit="return confirm('Delete this FAQ?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-xs text-red-500 hover:underline font-semibold">
-                                🗑 Delete
+                    {{-- View Mode --}}
+                    <div id="view-{{ $faq->id }}">
+                        <div style="font-weight:600;font-size:14px;color:var(--text-1);margin-bottom:5px;">
+                            {{ $faq->question }}
+                        </div>
+                        <div style="font-size:13.5px;color:var(--text-2);line-height:1.6;">
+                            {{ $faq->answer }}
+                        </div>
+                        <div class="d-flex gap-2 mt-3">
+                            <button onclick="toggleEdit({{ $faq->id }})" class="btn-outline-custom" style="font-size:12px;padding:5px 12px;">
+                                <i class="bi bi-pencil-fill"></i> Edit
                             </button>
+                            <form action="{{ route('admin.faqs.destroy', $faq) }}" method="POST"
+                                  onsubmit="return confirm('Delete this FAQ?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" style="display:inline-flex;align-items:center;gap:4px;padding:5px 12px;background:#FFF0F2;color:var(--danger);border:1px solid #FFD0D8;border-radius:8px;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;transition:all 0.15s;" onmouseover="this.style.background='#FFD0D8'" onmouseout="this.style.background='#FFF0F2'">
+                                    <i class="bi bi-trash-fill"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    {{-- Edit Mode --}}
+                    <div id="edit-{{ $faq->id }}" style="display:none;">
+                        <form action="{{ route('admin.faqs.update', $faq) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <div class="mb-2">
+                                <label class="form-label-sm">Question</label>
+                                <input type="text" name="question" value="{{ $faq->question }}" class="form-ctrl">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label-sm">Answer</label>
+                                <textarea name="answer" rows="4" class="form-ctrl" style="resize:vertical;">{{ $faq->answer }}</textarea>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn-primary-custom" style="font-size:12.5px;padding:7px 16px;">
+                                    <i class="bi bi-check-lg"></i> Save
+                                </button>
+                                <button type="button" onclick="toggleEdit({{ $faq->id }})" class="btn-ghost" style="font-size:12.5px;">
+                                    Cancel
+                                </button>
+                            </div>
                         </form>
                     </div>
+
                 </div>
-
-                {{-- Edit Mode (hidden by default) --}}
-                <div id="edit-{{ $faq->id }}" class="hidden">
-                    <form action="{{ route('admin.faqs.update', $faq) }}" method="POST">
-                        @csrf
-                        @method('PUT')
-                        <div class="mb-2">
-                            <input type="text" name="question" value="{{ $faq->question }}"
-                                   class="w-full border border-blue-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400">
-                        </div>
-                        <div class="mb-3">
-                            <textarea name="answer" rows="3"
-                                      class="w-full border border-blue-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400">{{ $faq->answer }}</textarea>
-                        </div>
-                        <div class="flex gap-3">
-                            <button type="submit"
-                                class="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-xs font-semibold hover:bg-blue-700">
-                                Save
-                            </button>
-                            <button type="button" onclick="toggleEdit({{ $faq->id }})"
-                                class="text-gray-500 text-xs hover:underline">
-                                Cancel
-                            </button>
-                        </div>
-                    </form>
+            @empty
+                <div style="text-align:center;padding:56px;color:var(--text-3);">
+                    <i class="bi bi-question-circle" style="font-size:36px;display:block;margin-bottom:12px;opacity:0.3;"></i>
+                    No FAQs yet. Add one on the left!
                 </div>
+            @endforelse
 
-            </div>
-        @empty
-            <div class="px-6 py-12 text-center text-gray-400">
-                <p class="text-4xl mb-2">❓</p>
-                <p>No FAQs yet. Add one above!</p>
-            </div>
-        @endforelse
-
-        {{-- Pagination --}}
-        @if($faqs->hasPages())
-            <div class="px-6 py-4 border-t border-gray-100">
-                {{ $faqs->links() }}
-            </div>
-        @endif
+            @if($faqs->hasPages())
+                <div style="padding:14px 20px;border-top:1px solid var(--border);">
+                    {{ $faqs->links() }}
+                </div>
+            @endif
+        </div>
     </div>
-
 </div>
 
+@push('scripts')
 <script>
-    function toggleEdit(id) {
-        document.getElementById('view-' + id).classList.toggle('hidden');
-        document.getElementById('edit-' + id).classList.toggle('hidden');
-    }
+function toggleEdit(id) {
+    const viewEl = document.getElementById('view-' + id);
+    const editEl = document.getElementById('edit-' + id);
+    const isEditing = editEl.style.display !== 'none';
+    viewEl.style.display = isEditing ? 'block' : 'none';
+    editEl.style.display = isEditing ? 'none' : 'block';
+}
 </script>
+@endpush
 
-</body>
-</html>
+@endsection

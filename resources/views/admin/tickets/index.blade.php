@@ -1,153 +1,125 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>All Tickets — InquiSmart Admin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
+@extends('admin.layout')
+@section('title', 'All Tickets')
 
-<div class="max-w-6xl mx-auto py-10 px-4">
+@section('content')
 
-    {{-- Header --}}
-    <div class="flex justify-between items-center mb-6">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-800">All Tickets</h1>
-            <p class="text-sm text-gray-400 mt-1">Manage and respond to customer inquiries</p>
+{{-- Header + Filter bar --}}
+<div class="surface surface-pad mb-4 fade-up">
+    <form method="GET" action="{{ route('admin.tickets.index') }}" class="row g-3 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label-sm">Search</label>
+            <div style="position:relative;">
+                <i class="bi bi-search" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:14px;"></i>
+                <input type="text" name="search" value="{{ request('search') }}"
+                       placeholder="Search subject or customer..."
+                       class="form-ctrl" style="padding-left:34px;">
+            </div>
         </div>
-        <a href="{{ route('admin.dashboard') }}"
-           class="text-blue-600 hover:underline text-sm">← Back to Dashboard</a>
-    </div>
-
-    {{-- Success Message --}}
-    @if(session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    {{-- Filters --}}
-    <form method="GET" action="{{ route('admin.tickets.index') }}"
-          class="bg-white rounded-2xl shadow p-4 mb-6 flex flex-wrap gap-3 items-end">
-
-        <div>
-            <label class="text-xs text-gray-500 block mb-1">Search</label>
-            <input type="text" name="search" value="{{ request('search') }}"
-                   placeholder="Search subject..."
-                   class="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400">
-        </div>
-
-        <div>
-            <label class="text-xs text-gray-500 block mb-1">Status</label>
-            <select name="status" class="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none">
+        <div class="col-md-2">
+            <label class="form-label-sm">Status</label>
+            <select name="status" class="form-ctrl">
                 <option value="">All Status</option>
                 <option value="Pending"    {{ request('status') == 'Pending'    ? 'selected' : '' }}>Pending</option>
                 <option value="Processing" {{ request('status') == 'Processing' ? 'selected' : '' }}>Processing</option>
                 <option value="Resolved"   {{ request('status') == 'Resolved'   ? 'selected' : '' }}>Resolved</option>
             </select>
         </div>
-
-        <div>
-            <label class="text-xs text-gray-500 block mb-1">Sentiment</label>
-            <select name="sentiment" class="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none">
+        <div class="col-md-2">
+            <label class="form-label-sm">Sentiment</label>
+            <select name="sentiment" class="form-ctrl">
                 <option value="">All Sentiment</option>
-                <option value="Urgent"     {{ request('sentiment') == 'Urgent'     ? 'selected' : '' }}>🔴 Urgent</option>
-                <option value="Frustrated" {{ request('sentiment') == 'Frustrated' ? 'selected' : '' }}>🟡 Frustrated</option>
-                <option value="Neutral"    {{ request('sentiment') == 'Neutral'    ? 'selected' : '' }}>🔵 Neutral</option>
+                <option value="Negative"  {{ request('sentiment') == 'Negative'  ? 'selected' : '' }}>Negative</option>
+                <option value="Positive"  {{ request('sentiment') == 'Positive'  ? 'selected' : '' }}>Positive</option>
+                <option value="Neutral"   {{ request('sentiment') == 'Neutral'   ? 'selected' : '' }}>Neutral</option>
+                <option value="Urgent"    {{ request('sentiment') == 'Urgent'    ? 'selected' : '' }}>Urgent</option>
+                <option value="Frustrated"{{ request('sentiment') == 'Frustrated'? 'selected' : '' }}>Frustrated</option>
             </select>
         </div>
-
-        <button type="submit"
-            class="bg-blue-600 text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-blue-700">
-            Filter
-        </button>
-
-        <a href="{{ route('admin.tickets.index') }}"
-           class="text-gray-500 text-sm hover:underline py-2">Clear</a>
+        <div class="col-md-auto">
+            <button type="submit" class="btn-primary-custom">
+                <i class="bi bi-funnel-fill"></i> Filter
+            </button>
+        </div>
+        <div class="col-md-auto">
+            <a href="{{ route('admin.tickets.index') }}" class="btn-ghost">
+                <i class="bi bi-x-circle"></i> Clear
+            </a>
+        </div>
     </form>
+</div>
 
-    {{-- Tickets Table --}}
-    <div class="bg-white rounded-2xl shadow overflow-hidden">
-        <table class="w-full text-sm">
-            <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+{{-- Table --}}
+<div class="surface fade-up delay-1">
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
                 <tr>
-                    <th class="px-6 py-4 text-left">Ticket ID</th>
-                    <th class="px-6 py-4 text-left">Customer</th>
-                    <th class="px-6 py-4 text-left">Subject</th>
-                    <th class="px-6 py-4 text-left">Sentiment</th>
-                    <th class="px-6 py-4 text-left">Status</th>
-                    <th class="px-6 py-4 text-left">Date</th>
-                    <th class="px-6 py-4 text-left">Action</th>
+                    <th>Ticket ID</th>
+                    <th>Customer</th>
+                    <th>Subject</th>
+                    <th>Sentiment</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th></th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-100">
+            <tbody>
                 @forelse($tickets as $ticket)
                     @php
-                        $statusColor = match($ticket->status) {
-                            'Resolved'   => 'bg-green-100 text-green-700',
-                            'Processing' => 'bg-yellow-100 text-yellow-700',
-                            default      => 'bg-blue-100 text-blue-700',
-                        };
-                        $sentimentColor = match($ticket->sentiment) {
-                            'Urgent'     => 'bg-red-100 text-red-700',
-                            'Frustrated' => 'bg-orange-100 text-orange-700',
-                            default      => 'bg-gray-100 text-gray-600',
-                        };
-                        $sentimentIcon = match($ticket->sentiment) {
-                            'Urgent'     => '🔴',
-                            'Frustrated' => '🟡',
-                            default      => '🔵',
+                        $sentKey = strtolower($ticket->sentiment);
+                        $dotColor = match($sentKey) {
+                            'negative','urgent'     => 'var(--danger)',
+                            'positive'              => 'var(--success)',
+                            'frustrated'            => 'var(--warning)',
+                            default                 => '#5B72F8',
                         };
                     @endphp
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-6 py-4 text-gray-400 font-mono">
-                            #TKT-{{ str_pad($ticket->id, 3, '0', STR_PAD_LEFT) }}
+                    <tr onclick="window.location='{{ route('admin.tickets.show', $ticket) }}'">
+                        <td><span class="td-id">#TKT-{{ str_pad($ticket->id, 3, '0', STR_PAD_LEFT) }}</span></td>
+                        <td>
+                            <div style="font-weight:600;font-size:13.5px;">{{ $ticket->user->name ?? 'Unknown' }}</div>
+                            <div style="font-size:11.5px;color:var(--text-3);">{{ $ticket->user->email ?? '' }}</div>
                         </td>
-                        <td class="px-6 py-4">
-                            <p class="font-semibold text-gray-800">{{ $ticket->user->name ?? 'Unknown' }}</p>
-                            <p class="text-xs text-gray-400">{{ $ticket->user->email ?? '' }}</p>
-                        </td>
-                        <td class="px-6 py-4 text-gray-700 max-w-xs truncate">
+                        <td style="color:var(--text-2);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
                             {{ $ticket->subject }}
                         </td>
-                        <td class="px-6 py-4">
-                            <span class="px-2 py-1 rounded-full text-xs font-semibold {{ $sentimentColor }}">
-                                {{ $sentimentIcon }} {{ $ticket->sentiment }}
+                        <td>
+                            <span class="chip chip-{{ $sentKey }}">
+                                <span style="width:6px;height:6px;border-radius:50%;background:{{ $dotColor }};flex-shrink:0;display:inline-block;"></span>
+                                {{ $ticket->sentiment }}
                             </span>
                         </td>
-                        <td class="px-6 py-4">
-                            <span class="px-2 py-1 rounded-full text-xs font-semibold {{ $statusColor }}">
+                        <td>
+                            <span class="chip chip-{{ strtolower($ticket->status) }}">
                                 {{ $ticket->status }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 text-gray-400 text-xs">
+                        <td style="color:var(--text-3);font-size:12.5px;">
                             {{ $ticket->created_at->format('M d, Y') }}
                         </td>
-                        <td class="px-6 py-4">
-                            <a href="{{ route('admin.tickets.show', $ticket) }}"
-                               class="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-xs font-semibold hover:bg-blue-700">
+                        <td onclick="event.stopPropagation()">
+                            <a href="{{ route('admin.tickets.show', $ticket) }}" class="btn-primary-custom" style="font-size:12px;padding:6px 14px;">
                                 View
                             </a>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-12 text-center text-gray-400">
-                            <p class="text-4xl mb-2">📭</p>
-                            <p>No tickets found.</p>
+                        <td colspan="7" style="text-align:center;padding:56px;color:var(--text-3);">
+                            <i class="bi bi-inbox" style="font-size:36px;display:block;margin-bottom:12px;opacity:0.3;"></i>
+                            No tickets found
                         </td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
-
-        {{-- Pagination --}}
-        @if($tickets->hasPages())
-            <div class="px-6 py-4 border-t border-gray-100">
-                {{ $tickets->withQueryString()->links() }}
-            </div>
-        @endif
     </div>
 
+    @if($tickets->hasPages())
+        <div style="padding:16px 20px;border-top:1px solid var(--border);">
+            {{ $tickets->withQueryString()->links() }}
+        </div>
+    @endif
 </div>
-</body>
-</html>
+
+@endsection
