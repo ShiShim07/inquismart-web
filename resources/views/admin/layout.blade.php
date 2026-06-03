@@ -493,19 +493,28 @@
         .btn-ghost:hover { background: var(--bg); color: var(--text-1); }
 
         /* ══════════════ PAGINATION ══════════════ */
+        .pagination { gap: 4px; flex-wrap: wrap; }
         .pagination .page-link {
             border-radius: 8px !important;
             margin: 0 2px;
             border: 1.5px solid var(--border);
             color: var(--text-2);
-            font-size: 13px;
-            font-family: 'DM Sans', sans-serif;
+            font-size: 13px !important;
+            line-height: 1 !important;
+            font-family: 'DM Sans', sans-serif !important;
+            width: 34px;
+            height: 34px;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 0 !important;
         }
         .pagination .page-item.active .page-link {
             background: var(--primary);
             border-color: var(--primary);
             color: #fff;
         }
+        .pagination .page-item.disabled .page-link { opacity: 0.45; }
 
         /* ══════════════ ANIMATIONS ══════════════ */
         @keyframes fadeUp {
