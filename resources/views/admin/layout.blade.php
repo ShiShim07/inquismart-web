@@ -66,7 +66,7 @@
         .sidebar::after {
             content: '';
             position: absolute;
-            bottom: 60px; left: -60px;
+            bottom: 60px; left: 0;
             width: 200px; height: 200px;
             background: radial-gradient(circle, rgba(59,91,246,0.2) 0%, transparent 70%);
             pointer-events: none;
