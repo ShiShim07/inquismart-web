@@ -93,10 +93,7 @@ class Ticket extends Model
             'Positive' => 'success',
             'Negative' => 'danger',
             'Neutral'  => 'info',
-            // Legacy support — in case old data still has these
-            'Urgent'      => 'danger',
-            'Frustrated'  => 'warning',
-            default       => 'secondary',
+            default    => 'secondary',
         };
     }
 

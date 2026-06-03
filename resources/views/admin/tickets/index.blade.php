@@ -31,8 +31,6 @@
                 <option value="Negative"  {{ request('sentiment') == 'Negative'  ? 'selected' : '' }}>Negative</option>
                 <option value="Positive"  {{ request('sentiment') == 'Positive'  ? 'selected' : '' }}>Positive</option>
                 <option value="Neutral"   {{ request('sentiment') == 'Neutral'   ? 'selected' : '' }}>Neutral</option>
-                <option value="Urgent"    {{ request('sentiment') == 'Urgent'    ? 'selected' : '' }}>Urgent</option>
-                <option value="Frustrated"{{ request('sentiment') == 'Frustrated'? 'selected' : '' }}>Frustrated</option>
             </select>
         </div>
         <div class="col-md-auto">
@@ -68,10 +66,9 @@
                     @php
                         $sentKey = strtolower($ticket->sentiment);
                         $dotColor = match($sentKey) {
-                            'negative','urgent'     => 'var(--danger)',
-                            'positive'              => 'var(--success)',
-                            'frustrated'            => 'var(--warning)',
-                            default                 => '#5B72F8',
+                            'negative'  => 'var(--danger)',
+                            'positive'  => 'var(--success)',
+                            default     => '#5B72F8',
                         };
                     @endphp
                     <tr onclick="window.location='{{ route('admin.tickets.show', $ticket) }}'">
