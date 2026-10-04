@@ -78,7 +78,7 @@
                             <div style="max-width:70%;">
                                 <div class="bg-white border px-3 py-2"
                                      style="border-radius:18px 18px 18px 4px;">
-                                    {!! nl2br(e($msg->message)) !!}
+                                    {!! nl2br(preg_replace('/\*\*(.+?)\*\*/s', '<strong>$1</strong>', e($msg->message))) !!}
                                     @if($msg->needs_human)
                                         <div class="mt-2">
                                             <span class="badge bg-warning text-dark" style="font-size:10px;">
